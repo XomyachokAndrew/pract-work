@@ -12,47 +12,47 @@ namespace Pract.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OfficesController : ControllerBase
+    public class PostsController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public OfficesController(AppDbContext context)
+        public PostsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Offices
+        // GET: api/Posts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Office>>> GetOffices()
+        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
         {
-            return await _context.Offices.ToListAsync();
+            return await _context.Posts.ToListAsync();
         }
 
-        // GET: api/Offices/5
+        // GET: api/Posts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Office>> GetOffice(Guid id)
+        public async Task<ActionResult<Post>> GetPost(Guid id)
         {
-            var office = await _context.Offices.FindAsync(id);
+            var post = await _context.Posts.FindAsync(id);
 
-            if (office == null)
+            if (post == null)
             {
                 return NotFound();
             }
 
-            return office;
+            return post;
         }
 
-        // PUT: api/Offices/5
+        // PUT: api/Posts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOffice(Guid id, Office office)
+        public async Task<IActionResult> PutPost(Guid id, Post post)
         {
-            if (id != office.Id)
+            if (id != post.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(office).State = EntityState.Modified;
+            _context.Entry(post).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace Pract.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OfficeExists(id))
+                if (!PostExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace Pract.Controllers
             return NoContent();
         }
 
-        // POST: api/Offices
+        // POST: api/Posts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Office>> PostOffice(Office office)
+        public async Task<ActionResult<Post>> PostPost(Post post)
         {
-            _context.Offices.Add(office);
+            _context.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOffice", new { id = office.Id }, office);
+            return CreatedAtAction("GetPost", new { id = post.Id }, post);
         }
 
-        // DELETE: api/Offices/5
+        // DELETE: api/Posts/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOffice(Guid id)
+        public async Task<IActionResult> DeletePost(Guid id)
         {
-            var office = await _context.Offices.FindAsync(id);
-            if (office == null)
+            var post = await _context.Posts.FindAsync(id);
+            if (post == null)
             {
                 return NotFound();
             }
 
-            _context.Offices.Remove(office);
+            _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool OfficeExists(Guid id)
+        private bool PostExists(Guid id)
         {
-            return _context.Offices.Any(e => e.Id == id);
+            return _context.Posts.Any(e => e.Id == id);
         }
     }
 }

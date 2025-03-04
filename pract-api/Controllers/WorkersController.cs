@@ -12,47 +12,47 @@ namespace Pract.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OfficesController : ControllerBase
+    public class WorkersController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public OfficesController(AppDbContext context)
+        public WorkersController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Offices
+        // GET: api/Workers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Office>>> GetOffices()
+        public async Task<ActionResult<IEnumerable<Worker>>> GetWorkers()
         {
-            return await _context.Offices.ToListAsync();
+            return await _context.Workers.ToListAsync();
         }
 
-        // GET: api/Offices/5
+        // GET: api/Workers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Office>> GetOffice(Guid id)
+        public async Task<ActionResult<Worker>> GetWorker(Guid id)
         {
-            var office = await _context.Offices.FindAsync(id);
+            var worker = await _context.Workers.FindAsync(id);
 
-            if (office == null)
+            if (worker == null)
             {
                 return NotFound();
             }
 
-            return office;
+            return worker;
         }
 
-        // PUT: api/Offices/5
+        // PUT: api/Workers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOffice(Guid id, Office office)
+        public async Task<IActionResult> PutWorker(Guid id, Worker worker)
         {
-            if (id != office.Id)
+            if (id != worker.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(office).State = EntityState.Modified;
+            _context.Entry(worker).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace Pract.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OfficeExists(id))
+                if (!WorkerExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace Pract.Controllers
             return NoContent();
         }
 
-        // POST: api/Offices
+        // POST: api/Workers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Office>> PostOffice(Office office)
+        public async Task<ActionResult<Worker>> PostWorker(Worker worker)
         {
-            _context.Offices.Add(office);
+            _context.Workers.Add(worker);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOffice", new { id = office.Id }, office);
+            return CreatedAtAction("GetWorker", new { id = worker.Id }, worker);
         }
 
-        // DELETE: api/Offices/5
+        // DELETE: api/Workers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOffice(Guid id)
+        public async Task<IActionResult> DeleteWorker(Guid id)
         {
-            var office = await _context.Offices.FindAsync(id);
-            if (office == null)
+            var worker = await _context.Workers.FindAsync(id);
+            if (worker == null)
             {
                 return NotFound();
             }
 
-            _context.Offices.Remove(office);
+            _context.Workers.Remove(worker);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool OfficeExists(Guid id)
+        private bool WorkerExists(Guid id)
         {
-            return _context.Offices.Any(e => e.Id == id);
+            return _context.Workers.Any(e => e.Id == id);
         }
     }
 }
