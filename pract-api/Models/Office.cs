@@ -12,6 +12,9 @@ namespace Pract.Models
         [Column("name")]
         public string Name { get; set; }
 
+        [Column("address")]
+        public string Address { get; set; }
+
         public List<Worker> Workers { get; set; } = new List<Worker>();
     }
 }
