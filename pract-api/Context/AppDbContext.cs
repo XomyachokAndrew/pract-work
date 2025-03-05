@@ -47,9 +47,12 @@ namespace Pract.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Глобальный фильтр для исключения удалённых записей
-            modelBuilder.Entity<Worker>().HasQueryFilter(c => !c.IsDeleted);
-            modelBuilder.Entity<Office>().HasQueryFilter(o => !o.IsDeleted);
-            modelBuilder.Entity<Post>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Worker>().HasQueryFilter(c => !c.IsDeleted).Property(e => e.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP"); ;
+            modelBuilder.Entity<Office>().HasQueryFilter(o => !o.IsDeleted).Property(e => e.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP"); ;
+            modelBuilder.Entity<Post>().HasQueryFilter(o => !o.IsDeleted).Property(e => e.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP"); ;
         }
     }
 }
