@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pract.Context;
+using Pract.DTOs;
 using Pract.Models;
 
 namespace Pract.Controllers
@@ -21,14 +17,12 @@ namespace Pract.Controllers
             _context = context;
         }
 
-        // GET: api/Offices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Office>>> GetOffices()
         {
             return await _context.Offices.ToListAsync();
         }
 
-        // GET: api/Offices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Office>> GetOffice(Guid id)
         {
@@ -42,8 +36,6 @@ namespace Pract.Controllers
             return office;
         }
 
-        // PUT: api/Offices/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOffice(Guid id, Office office)
         {
@@ -73,18 +65,21 @@ namespace Pract.Controllers
             return NoContent();
         }
 
-        // POST: api/Offices
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Office>> PostOffice(Office office)
+        public async Task<ActionResult<OfficeDto>> PostOffice(OfficeDto office)
         {
-            _context.Offices.Add(office);
+            var result = new Office 
+            { 
+                Name = office.Name, 
+                Address = office.Address 
+            };
+
+            _context.Offices.Add(result);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOffice", new { id = office.Id }, office);
+            return CreatedAtAction("GetOffice", new { id = result.Id }, result);
         }
 
-        // DELETE: api/Offices/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOffice(Guid id)
         {
