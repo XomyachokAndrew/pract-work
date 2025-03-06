@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pract.Context;
+using Pract.DTOs;
 using Pract.Models;
 
 namespace Pract.Controllers
@@ -21,14 +17,14 @@ namespace Pract.Controllers
             _context = context;
         }
 
-        // GET: api/Posts
+        // GET api/posts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
         {
             return await _context.Posts.ToListAsync();
         }
 
-        // GET: api/Posts/5
+        // GET api/posts/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Post>> GetPost(Guid id)
         {
@@ -42,59 +38,57 @@ namespace Pract.Controllers
             return post;
         }
 
-        // PUT: api/Posts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT api/posts/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(Guid id, Post post)
+        public async Task<IActionResult> PutPost(Guid id, PostDto postDto)
         {
-            if (id != post.Id)
+            if (!PostExists(id))
             {
                 return BadRequest();
             }
 
-            _context.Entry(post).State = EntityState.Modified;
+            var post = new Post
+            {
+                Name = postDto.Name
+            };
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            post.UpdatedAt = DateTime.Now;
+            _context.Posts.Add(post);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Posts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST api/posts/{id}
         [HttpPost]
-        public async Task<ActionResult<Post>> PostPost(Post post)
+        public async Task<ActionResult<PostDto>> PostPost(PostDto post)
         {
-            _context.Posts.Add(post);
+            var result = new Post
+            {
+                Name = post.Name,
+            };
+
+            _context.Posts.Add(result);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPost", new { id = post.Id }, post);
+            return CreatedAtAction("GetPost", new { id = result.Id }, result);
         }
 
-        // DELETE: api/Posts/5
+        // DELETE api/posts/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(Guid id)
         {
             var post = await _context.Posts.FindAsync(id);
-            if (post == null)
+            if (post == null || post.IsDeleted) // Проверяем, не удалена ли уже запись
             {
                 return NotFound();
             }
 
-            _context.Posts.Remove(post);
+            // Мягкое удаление
+            post.IsDeleted = true;
+            post.UpdatedAt = DateTime.Now; // Обновляем время изменения
+
+            _context.Posts.Update(post);
             await _context.SaveChangesAsync();
 
             return NoContent();

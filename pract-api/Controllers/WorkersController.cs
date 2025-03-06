@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Pract.Context;
+using Pract.DTOs;
 using Pract.Models;
 
 namespace Pract.Controllers
@@ -21,80 +16,254 @@ namespace Pract.Controllers
             _context = context;
         }
 
-        // GET: api/Workers
+        // GET api/workers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Worker>>> GetWorkers()
+        public async Task<ActionResult<IEnumerable<WorkerWithDetailsDto>>> GetWorkers()
         {
-            return await _context.Workers.ToListAsync();
+            var workersWithDetails = new List<WorkerWithDetailsDto>();
+            var workers = _context.Workers.ToList();
+            
+
+            foreach (var item in workers)
+            {
+                PostDto? postDto = new();
+                OfficeDto? officeDto = new();
+
+                var workerPost = _context.WorkerPosts.Where(wp => wp.WorkerId == item.Id && wp.UpdatedAt == null).FirstOrDefault() ?? null;
+                if (workerPost != null)
+                {
+                    var post = await _context.Posts.FindAsync(workerPost?.PostId) ?? null;
+                    postDto.Id = post.Id;
+                    postDto.Name = post.Name;
+                }
+
+                var workerOffice = _context.WorkerOffices.Where(wo => wo.WorkerId == item.Id && wo.UpdatedAt == null).FirstOrDefault() ?? null;
+                if (workerOffice != null)
+                {
+                    var office = await _context.Offices.FindAsync(workerOffice?.OfficeId) ?? null;
+                    officeDto.Id = office.Id;
+                    officeDto.Name = office.Name;
+                    officeDto.Address = office.Address;
+                }
+
+                var newWorker = new WorkerWithDetailsDto
+                {
+                    Id = item.Id,
+                    Name = $"{item.Surname} {item.FirstName} {item.Patronymic}",
+                    Post = postDto ?? null,
+                    Office = officeDto ?? null,
+                };
+
+                workersWithDetails.Add(newWorker);
+            }
+
+            return workersWithDetails;
         }
 
-        // GET: api/Workers/5
+        // GET api/workers/offices/{id}
+        [HttpGet("offices/{id}")]
+        public async Task<ActionResult<IEnumerable<WorkerWithDetailsDto>>> GetWorkersInOffice(Guid id)
+        {
+            var workersOffice = _context.WorkerOffices
+                .Where(wo => wo.OfficeId == id && wo.UpdatedAt == null)
+                .OrderByDescending(wo => wo.CreatedAt)
+                .ToList() ?? null;
+
+            Worker? worker = new();
+            PostDto? postDto = new();
+            OfficeDto? officeDto = new();
+            WorkerPosts? workerPost = new();
+            Office? office = new();    
+
+            var workers = new List<WorkerWithDetailsDto>();
+
+            foreach (var item in workersOffice)
+            {
+                worker = await _context.Workers.FindAsync(item.WorkerId);
+
+                if (worker == null) continue;
+
+                workerPost = _context.WorkerPosts.Where(wp => wp.WorkerId == worker.Id && wp.UpdatedAt == null).FirstOrDefault() ?? null;
+                if (workerPost != null)
+                {
+                    var post = await _context.Posts.FindAsync(workerPost?.PostId) ?? null;
+                    postDto.Id = post.Id;
+                    postDto.Name = post.Name;
+                }
+
+                office = await _context.Offices.FindAsync(id);
+                if (office != null)
+                {
+                    officeDto.Id = office.Id;
+                    officeDto.Name = office.Name;
+                    officeDto.Address = office.Address;
+                }
+
+                var newWorker = new WorkerWithDetailsDto
+                {
+                    Id = worker.Id,
+                    Name = $"{worker.Surname} {worker.FirstName} {worker.Patronymic}",
+                    Post = postDto ?? null,
+                    Office = officeDto ?? null,
+                };
+
+                workers.Add(newWorker);
+            }
+
+            return workers;
+        }
+
+        // GET api/workers/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Worker>> GetWorker(Guid id)
+        public async Task<ActionResult<WorkerWithDetailsDto>> GetWorker(Guid id)
         {
             var worker = await _context.Workers.FindAsync(id);
 
-            if (worker == null)
+            PostDto? postDto = new();
+            OfficeDto? officeDto = new();
+
+            var workerPost = _context.WorkerPosts.Where(wp => wp.WorkerId == worker.Id && wp.UpdatedAt == null).FirstOrDefault() ?? null;
+            if (workerPost != null)
             {
-                return NotFound();
+                var post = await _context.Posts.FindAsync(workerPost?.PostId) ?? null;
+                postDto.Id = post.Id;
+                postDto.Name = post.Name;
             }
 
-            return worker;
+            var workerOffice = _context.WorkerOffices.Where(wo => wo.WorkerId == worker.Id && wo.UpdatedAt == null).FirstOrDefault() ?? null;
+            if (workerOffice != null)
+            {
+                var office = await _context.Offices.FindAsync(workerOffice?.OfficeId) ?? null;
+                officeDto.Id = office.Id;
+                officeDto.Name = office.Name;
+                officeDto.Address = office.Address;
+            }
+
+            var workersWithDetail = new WorkerWithDetailsDto
+            {
+                Id = worker.Id,
+                Name = $"{worker.Surname} {worker.FirstName} {worker.Patronymic}",
+                Post = postDto ?? null,
+                Office = officeDto ?? null,
+            };
+
+            return workersWithDetail;
         }
 
-        // PUT: api/Workers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT api/workers/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWorker(Guid id, Worker worker)
+        public async Task<IActionResult> PutWorker(Guid id, WorkerDto workerDto)
         {
-            if (id != worker.Id)
+            if (!WorkerExists(id))
             {
                 return BadRequest();
             }
 
-            _context.Entry(worker).State = EntityState.Modified;
+            var worker = new Worker
+            {
+                Surname = workerDto.Surname,
+                FirstName = workerDto.FirstName,
+                Patronymic = workerDto.Patronymic,
+                UpdatedAt = DateTime.Now,
+            };
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WorkerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Workers.Update(worker);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Workers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST api/workers/{id}
         [HttpPost]
-        public async Task<ActionResult<Worker>> PostWorker(Worker worker)
+        public async Task<ActionResult<WorkerDto>> PostWorker(WorkerDto worker)
         {
-            _context.Workers.Add(worker);
+            var result = new Worker
+            {
+                Surname = worker.Surname,
+                FirstName = worker.FirstName,
+                Patronymic = worker.Patronymic
+            };
+
+            _context.Workers.Add(result);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWorker", new { id = worker.Id }, worker);
+            return CreatedAtAction("GetWorker", new { id = result.Id }, result);
         }
 
-        // DELETE: api/Workers/5
+        // POST api/workers/offices
+        [HttpPost("offices")]
+        public async Task<ActionResult<WorkerOffices>> PostWorkerOffice(WorkerOfficeDto workerOfficesDto)
+        {
+            // Находим предыдущую запись для этого работника
+            var previousRecord = _context.WorkerOffices
+                .Where(wo => wo.WorkerId == workerOfficesDto.WorkerId)
+                .OrderByDescending(wo => wo.CreatedAt)
+                .FirstOrDefault();
+
+            if (previousRecord != null)
+            {
+                // Обновляем updated_at предыдущей записи
+                previousRecord.UpdatedAt = DateTime.Now;
+                _context.WorkerOffices.Update(previousRecord);
+            }
+
+            // Создаем новую запись
+            var newRecord = new WorkerOffices
+            {
+                WorkerId = workerOfficesDto.WorkerId,
+                OfficeId = workerOfficesDto.OfficeId,
+            };
+
+            _context.WorkerOffices.Add(newRecord);
+            await _context.SaveChangesAsync();
+
+            return newRecord;
+        }
+
+        // POST api/workers/posts
+        [HttpPost("posts")]
+        public async Task<ActionResult<WorkerPosts>> PostWorkerPost(WorkerPostDto workerPostDto)
+        {
+            // Находим предыдущую запись для этого работника
+            var previousRecord = _context.WorkerPosts
+                .Where(wo => wo.WorkerId == workerPostDto.WorkerId)
+                .OrderByDescending(wo => wo.CreatedAt)
+                .FirstOrDefault();
+
+            if (previousRecord != null)
+            {
+                // Обновляем updated_at предыдущей записи
+                previousRecord.UpdatedAt = DateTime.Now;
+                _context.WorkerPosts.Update(previousRecord);
+            }
+
+            var result = new WorkerPosts
+            {
+                WorkerId = workerPostDto.WorkerId,
+                PostId = workerPostDto.PostId,
+            };
+
+            _context.WorkerPosts.Add(result);
+            await _context.SaveChangesAsync();
+
+            return result;
+        }
+
+        // DELETE api/workers/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWorker(Guid id)
         {
             var worker = await _context.Workers.FindAsync(id);
-            if (worker == null)
+            if (worker == null || worker.IsDeleted) // Проверяем, не удалена ли уже запись
             {
                 return NotFound();
             }
 
-            _context.Workers.Remove(worker);
+            // Мягкое удаление
+            worker.IsDeleted = true;
+            worker.UpdatedAt = DateTime.Now; // Обновляем время изменения
+
+            _context.Workers.Update(worker);
             await _context.SaveChangesAsync();
 
             return NoContent();

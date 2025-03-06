@@ -37,7 +37,7 @@ namespace Pract.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasColumnName("crated_at")
+                        .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool>("IsDeleted")
@@ -55,7 +55,7 @@ namespace Pract.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Offices");
+                    b.ToTable("offices");
                 });
 
             modelBuilder.Entity("Pract.Models.Post", b =>
@@ -68,7 +68,7 @@ namespace Pract.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasColumnName("crated_at")
+                        .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool>("IsDeleted")
@@ -86,7 +86,7 @@ namespace Pract.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts");
+                    b.ToTable("posts");
                 });
 
             modelBuilder.Entity("Pract.Models.Worker", b =>
@@ -99,21 +99,91 @@ namespace Pract.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp")
-                        .HasColumnName("crated_at")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Patronymic")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("patronymic");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("surname");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("workers");
+                });
+
+            modelBuilder.Entity("Pract.Models.WorkerOffices", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
                     b.Property<Guid>("OfficeId")
                         .HasColumnType("uuid")
                         .HasColumnName("office_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("WorkerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("worker_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfficeId");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("worker_offices");
+                });
+
+            modelBuilder.Entity("Pract.Models.WorkerPosts", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid")
@@ -123,42 +193,72 @@ namespace Pract.Migrations
                         .HasColumnType("timestamp")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("WorkerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("worker_id");
 
-                    b.HasIndex("OfficeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Workers");
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("worker_posts");
                 });
 
-            modelBuilder.Entity("Pract.Models.Worker", b =>
+            modelBuilder.Entity("Pract.Models.WorkerOffices", b =>
                 {
-                    b.HasOne("Pract.Models.Post", "Post")
-                        .WithMany("Workers")
+                    b.HasOne("Pract.Models.Office", "Office")
+                        .WithMany("WorkerOffices")
                         .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Pract.Models.Office", "Office")
-                        .WithMany("Workers")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Pract.Models.Worker", "Worker")
+                        .WithMany("WorkerOffices")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Office");
 
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("Pract.Models.WorkerPosts", b =>
+                {
+                    b.HasOne("Pract.Models.Post", "Post")
+                        .WithMany("Workers")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pract.Models.Worker", "Worker")
+                        .WithMany("WorkerPosts")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Post");
+
+                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("Pract.Models.Office", b =>
                 {
-                    b.Navigation("Workers");
+                    b.Navigation("WorkerOffices");
                 });
 
             modelBuilder.Entity("Pract.Models.Post", b =>
                 {
                     b.Navigation("Workers");
+                });
+
+            modelBuilder.Entity("Pract.Models.Worker", b =>
+                {
+                    b.Navigation("WorkerOffices");
+
+                    b.Navigation("WorkerPosts");
                 });
 #pragma warning restore 612, 618
         }

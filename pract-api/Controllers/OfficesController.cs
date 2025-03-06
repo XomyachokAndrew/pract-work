@@ -17,12 +17,14 @@ namespace Pract.Controllers
             _context = context;
         }
 
+        // GET api/offices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Office>>> GetOffices()
         {
             return await _context.Offices.ToListAsync();
         }
 
+        // GET api/offices/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Office>> GetOffice(Guid id)
         {
@@ -36,35 +38,29 @@ namespace Pract.Controllers
             return office;
         }
 
+        // PUT api/offices/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOffice(Guid id, Office office)
+        public async Task<IActionResult> PutOffice(Guid id, OfficeDto officeDto)
         {
-            if (id != office.Id)
+            if (!OfficeExists(id))
             {
                 return BadRequest();
             }
 
-            _context.Entry(office).State = EntityState.Modified;
+            var office = new Office
+            {
+                Name = officeDto.Name,
+                Address = officeDto.Address,
+            };
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OfficeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            office.UpdatedAt = DateTime.Now; // Обновляем время изменения
+            _context.Offices.Update(office);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
+        // POST api/offices/{id}
         [HttpPost]
         public async Task<ActionResult<OfficeDto>> PostOffice(OfficeDto office)
         {
@@ -80,16 +76,21 @@ namespace Pract.Controllers
             return CreatedAtAction("GetOffice", new { id = result.Id }, result);
         }
 
+        // DELETE api/offices/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOffice(Guid id)
         {
             var office = await _context.Offices.FindAsync(id);
-            if (office == null)
+            if (office == null || office.IsDeleted) // Проверяем, не удалена ли уже запись
             {
                 return NotFound();
             }
 
-            _context.Offices.Remove(office);
+            // Мягкое удаление
+            office.IsDeleted = true;
+            office.UpdatedAt = DateTime.Now; // Обновляем время изменения
+
+            _context.Offices.Update(office);
             await _context.SaveChangesAsync();
 
             return NoContent();
