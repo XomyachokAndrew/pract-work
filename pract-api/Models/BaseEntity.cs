@@ -4,7 +4,7 @@ namespace Pract.Models
 {
     public abstract class BaseEntity
     {
-        [Column("crated_at", TypeName = "timestamp")]
+        [Column("created_at", TypeName = "timestamp")]
         public DateTime CreatedAt { get; set; }
 
         [Column("updated_at", TypeName = "timestamp")]

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pract.Models
 {
+    [Table("posts")]
     public class Post : BaseEntity
     {
         [Key]
@@ -12,6 +13,6 @@ namespace Pract.Models
         [Column("name")]
         public string Name { get; set; }
 
-        public List<Worker> Workers { get; set; } = new List<Worker>();
+        public List<WorkerPosts> Workers { get; set; }
     }
 }
