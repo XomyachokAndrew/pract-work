@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Pract.Context;
 using Pract.DTOs;
 using Pract.Models;
@@ -62,28 +63,28 @@ namespace Pract.Controllers
 
         // GET api/workers/offices/{id}
         [HttpGet("offices/{id}")]
-        public async Task<ActionResult<IEnumerable<WorkerWithDetailsDto>>> GetWorkersInOffice(Guid id)
+        public async Task<ActionResult<IEnumerable<WorkerWithPostDto>>> GetWorkersInOffice(Guid id)
         {
-            var workersOffice = _context.WorkerOffices
+            var workersOffice = await _context.WorkerOffices
                 .Where(wo => wo.OfficeId == id && wo.UpdatedAt == null)
                 .OrderByDescending(wo => wo.CreatedAt)
-                .ToList() ?? null;
+                .ToListAsync() ?? null;
 
             Worker? worker = new();
-            PostDto? postDto = new();
-            OfficeDto? officeDto = new();
-            WorkerPosts? workerPost = new();
-            Office? office = new();    
+            
 
-            var workers = new List<WorkerWithDetailsDto>();
+            var workers = new List<WorkerWithPostDto>();
 
             foreach (var item in workersOffice)
             {
+                PostDto? postDto = new();
+                WorkerPosts? workerPost = new();
+
                 worker = await _context.Workers.FindAsync(item.WorkerId);
 
                 if (worker == null) continue;
 
-                workerPost = _context.WorkerPosts.Where(wp => wp.WorkerId == worker.Id && wp.UpdatedAt == null).FirstOrDefault() ?? null;
+                workerPost = await _context.WorkerPosts.Where(wp => wp.WorkerId == worker.Id && wp.UpdatedAt == null).FirstOrDefaultAsync() ?? null;
                 if (workerPost != null)
                 {
                     var post = await _context.Posts.FindAsync(workerPost?.PostId) ?? null;
@@ -91,20 +92,11 @@ namespace Pract.Controllers
                     postDto.Name = post.Name;
                 }
 
-                office = await _context.Offices.FindAsync(id);
-                if (office != null)
-                {
-                    officeDto.Id = office.Id;
-                    officeDto.Name = office.Name;
-                    officeDto.Address = office.Address;
-                }
-
-                var newWorker = new WorkerWithDetailsDto
+                var newWorker = new WorkerWithPostDto
                 {
                     Id = worker.Id,
                     Name = $"{worker.Surname} {worker.FirstName} {worker.Patronymic}",
                     Post = postDto ?? null,
-                    Office = officeDto ?? null,
                 };
 
                 workers.Add(newWorker);
@@ -195,10 +187,10 @@ namespace Pract.Controllers
         public async Task<ActionResult<WorkerOffices>> PostWorkerOffice(WorkerOfficeDto workerOfficesDto)
         {
             // Находим предыдущую запись для этого работника
-            var previousRecord = _context.WorkerOffices
+            var previousRecord = await _context.WorkerOffices
                 .Where(wo => wo.WorkerId == workerOfficesDto.WorkerId)
                 .OrderByDescending(wo => wo.CreatedAt)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (previousRecord != null)
             {
@@ -225,10 +217,10 @@ namespace Pract.Controllers
         public async Task<ActionResult<WorkerPosts>> PostWorkerPost(WorkerPostDto workerPostDto)
         {
             // Находим предыдущую запись для этого работника
-            var previousRecord = _context.WorkerPosts
+            var previousRecord = await _context.WorkerPosts
                 .Where(wo => wo.WorkerId == workerPostDto.WorkerId)
                 .OrderByDescending(wo => wo.CreatedAt)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (previousRecord != null)
             {
