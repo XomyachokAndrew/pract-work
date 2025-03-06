@@ -1,9 +1,8 @@
 ﻿namespace Pract.DTOs
 {
-    public class OfficeDto
+    public class PostDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Address { get; set; }
     }
 }
