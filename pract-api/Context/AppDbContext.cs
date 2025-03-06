@@ -8,6 +8,8 @@ namespace Pract.Context
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Office> Offices { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<WorkerOffices> WorkerOffices { get; set; }
+        public DbSet<WorkerPosts> WorkerPosts { get; set; }
 
         public override int SaveChanges()
         {
@@ -48,11 +50,20 @@ namespace Pract.Context
         {
             // Глобальный фильтр для исключения удалённых записей
             modelBuilder.Entity<Worker>().HasQueryFilter(c => !c.IsDeleted).Property(e => e.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP"); ;
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
             modelBuilder.Entity<Office>().HasQueryFilter(o => !o.IsDeleted).Property(e => e.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP"); ;
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
             modelBuilder.Entity<Post>().HasQueryFilter(o => !o.IsDeleted).Property(e => e.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP"); ;
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<WorkerOffices>().HasQueryFilter(o => !o.IsDeleted).Property(e => e.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<WorkerPosts>().HasQueryFilter(o => !o.IsDeleted).Property(e => e.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
         }
     }
 }
