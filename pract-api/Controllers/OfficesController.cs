@@ -38,6 +38,39 @@ namespace Pract.Controllers
             return office;
         }
 
+        // GET api/offices/{id}
+        [HttpGet("workers/{id}")]
+        public async Task<ActionResult<IEnumerable<OfficeHistoryDto>>> GetHistoryOfficeForWorker(Guid id)
+        {
+            List<OfficeHistoryDto>? officeHistories = [];
+
+            var workerOffice = await _context.WorkerOffices
+                .Where(wo => wo.WorkerId == id)
+                .OrderByDescending(wo => wo.CreatedAt)
+                .ToListAsync();
+            OfficeHistoryDto? officeHistory = null;
+
+            if (workerOffice != null)
+            {
+                foreach (var item in workerOffice)
+                {
+                    var office = await _context.Offices.FindAsync(item.OfficeId);
+                    officeHistory = new()
+                    {
+                        Id = item.Id,
+                        Name = office.Name,
+                        CreatedAt = item.CreatedAt,
+                        UpdatedAt = item.UpdatedAt ?? null,
+                    };
+
+                    officeHistories.Add(officeHistory);
+                }
+                return officeHistories;
+            }
+
+            return NoContent();
+        }
+
         // PUT api/offices/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOffice(Guid id, OfficeDto officeDto)
@@ -64,10 +97,10 @@ namespace Pract.Controllers
         [HttpPost]
         public async Task<ActionResult<OfficeDto>> PostOffice(OfficeDto office)
         {
-            var result = new Office 
-            { 
-                Name = office.Name, 
-                Address = office.Address 
+            var result = new Office
+            {
+                Name = office.Name,
+                Address = office.Address
             };
 
             _context.Offices.Add(result);

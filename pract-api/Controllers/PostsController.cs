@@ -24,6 +24,38 @@ namespace Pract.Controllers
             return await _context.Posts.ToListAsync();
         }
 
+        [HttpGet("workers/{id}")]
+        public async Task<ActionResult<IEnumerable<PostHistoryDto>>> GetHistoryPostForWorker(Guid id)
+        {
+            List<PostHistoryDto>? postHistories = [];
+
+            var workerPost = await _context.WorkerPosts
+                .Where(wp => wp.WorkerId == id)
+                .OrderByDescending(wp => wp.CreatedAt)
+                .ToListAsync();
+            PostHistoryDto? postHistoryDto = null;
+
+            if (workerPost != null)
+            {
+                foreach (var item in workerPost)
+                {
+                    var post = await _context.Posts.FindAsync(item.PostId);
+                    postHistoryDto = new()
+                    {
+                        Id = item.Id,
+                        Name = post.Name,
+                        CreatedAt = item.CreatedAt,
+                        UpdatedAt = item.UpdatedAt,
+                    };
+
+                    postHistories.Add(postHistoryDto);
+                }
+                return postHistories;
+            }
+
+            return NoContent();
+        }
+
         // GET api/posts/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Post>> GetPost(Guid id)
