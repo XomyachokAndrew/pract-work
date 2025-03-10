@@ -73,7 +73,7 @@ namespace Pract.Controllers
 
         // PUT api/offices/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOffice(Guid id, OfficeDto officeDto)
+        public async Task<IActionResult> PutOffice(Guid id, [FromBody] OfficeDto officeDto)
         {
             if (!OfficeExists(id))
             {
@@ -95,7 +95,8 @@ namespace Pract.Controllers
 
         // POST api/offices/{id}
         [HttpPost]
-        public async Task<ActionResult<OfficeDto>> PostOffice(OfficeDto office)
+        [Consumes("application/json")]
+        public async Task<ActionResult<OfficeDto>> PostOffice([FromBody] OfficeDto office)
         {
             var result = new Office
             {

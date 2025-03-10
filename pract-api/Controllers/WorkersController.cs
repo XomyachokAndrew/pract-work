@@ -23,7 +23,7 @@ namespace Pract.Controllers
         {
             var workersWithDetails = new List<WorkerWithDetailsDto>();
             var workers = _context.Workers.ToList();
-            
+
 
             foreach (var item in workers)
             {
@@ -71,7 +71,7 @@ namespace Pract.Controllers
                 .ToListAsync() ?? null;
 
             Worker? worker = new();
-            
+
 
             var workers = new List<WorkerWithPostDto>();
 
@@ -144,7 +144,7 @@ namespace Pract.Controllers
 
         // PUT api/workers/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWorker(Guid id, WorkerDto workerDto)
+        public async Task<IActionResult> PutWorker(Guid id, [FromBody] WorkerDto workerDto)
         {
             if (!WorkerExists(id))
             {
@@ -165,9 +165,10 @@ namespace Pract.Controllers
             return NoContent();
         }
 
-        // POST api/workers/{id}
+        // POST api/workers
         [HttpPost]
-        public async Task<ActionResult<WorkerDto>> PostWorker(WorkerDto worker)
+        [Consumes("application/json")]
+        public async Task<ActionResult<WorkerDto>> PostWorker([FromBody] WorkerDto worker)
         {
             var result = new Worker
             {
@@ -184,7 +185,8 @@ namespace Pract.Controllers
 
         // POST api/workers/offices
         [HttpPost("offices")]
-        public async Task<ActionResult<WorkerOffices>> PostWorkerOffice(WorkerOfficeDto workerOfficesDto)
+        [Consumes("application/json")]
+        public async Task<ActionResult<WorkerOffices>> PostWorkerOffice([FromBody] WorkerOfficeDto workerOfficesDto)
         {
             // Находим предыдущую запись для этого работника
             var previousRecord = await _context.WorkerOffices
@@ -214,7 +216,8 @@ namespace Pract.Controllers
 
         // POST api/workers/posts
         [HttpPost("posts")]
-        public async Task<ActionResult<WorkerPosts>> PostWorkerPost(WorkerPostDto workerPostDto)
+        [Consumes("application/json")]
+        public async Task<ActionResult<WorkerPosts>> PostWorkerPost([FromBody] WorkerPostDto workerPostDto)
         {
             // Находим предыдущую запись для этого работника
             var previousRecord = await _context.WorkerPosts
@@ -253,7 +256,7 @@ namespace Pract.Controllers
 
             // Мягкое удаление
             worker.IsDeleted = true;
-            worker.UpdatedAt = DateTime.Now; // Обновляем время изменения
+            worker.UpdatedAt = DateTime.Now;
 
             _context.Workers.Update(worker);
             await _context.SaveChangesAsync();

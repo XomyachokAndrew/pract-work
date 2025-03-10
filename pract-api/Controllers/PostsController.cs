@@ -93,7 +93,8 @@ namespace Pract.Controllers
 
         // POST api/posts/{id}
         [HttpPost]
-        public async Task<ActionResult<PostDto>> PostPost(PostDto post)
+        [Consumes("application/json")]
+        public async Task<ActionResult<PostDto>> PostPost([FromBody] PostDto post)
         {
             var result = new Post
             {
