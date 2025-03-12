@@ -7,10 +7,10 @@ import { WorkerDto } from '@models/workers-dtos';
 @Component({
   selector: 'app-edit-worker-modal',
   imports: [TuiTextfield, TuiButton],
-  templateUrl: './edit-worker-modal.component.html',
-  styleUrl: './edit-worker-modal.component.less'
+  templateUrl: './edit-name-modal.component.html',
+  styleUrl: './edit-name-modal.component.less'
 })
-export class EditWorkerModalComponent {
+export class EditNameModalComponent {
   private readonly alerts = inject(TuiAlertService);
 
   public readonly context = injectContext<TuiDialogContext<WorkerDto, WorkerDto>>();
