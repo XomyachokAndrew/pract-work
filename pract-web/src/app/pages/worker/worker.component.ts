@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { WorkerWithDetailsDto } from '@models/workers-dtos';
+import { WorkerDto, WorkerWithDetailsDto } from '@models/workers-dtos';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
@@ -12,11 +12,12 @@ import { TuiButton, tuiDialog, TuiScrollable, TuiScrollbar } from '@taiga-ui/cor
 import { PostService } from '@services/post.service';
 import { OfficeService } from '@services/office.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, isObservable, Observable, of } from 'rxjs';
 import { PostHistoryDto } from '@models/post-dtos';
 import { OfficeHistoryDto } from '@models/office-dtos';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { EditWorkerModalComponent } from '@components/edit-worker-modal/edit-worker-modal.component';
+import { WorkerService } from '@services/worker.service';
 
 @Component({
   selector: 'app-worker',
@@ -44,7 +45,9 @@ export class WorkerComponent implements OnInit {
   constructor(
     private route: Router,
     private postService: PostService,
-    private officeService: OfficeService
+    private officeService: OfficeService,
+    private workerService: WorkerService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -105,20 +108,41 @@ export class WorkerComponent implements OnInit {
 
   onChange() {
     this.dialog(this.worker.name)
-    .pipe(
-      takeUntilDestroyed(this.destroyRef),
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
         catchError(error => {
           console.error("Ошибка при загрузке модального окна", error);
           return of([]);
         })
-    )
-    .subscribe({
-      next: (data) => {
+      )
+      .subscribe({
+        next: (data) => {
           console.info(`Dialog emitted data = ${data}`);
-      },
-      complete: () => {
+          if (Array.isArray(data)) {
+            // Обработка случая, когда data является массивом
+            console.error('Received an array instead of WorkerDto');
+          } else if (data) {
+            const workerName: WorkerDto = data;
+            this.putWorker(workerName);
+            history.state.worker.name = workerName;
+            this.worker = history.state.worker;
+            this.cdr.markForCheck();
+          }
+        },
+        complete: () => {
           console.info('Dialog closed');
-      },
-  });
+        },
+      });
+  }
+
+  putWorker(workerName: WorkerDto) {
+    this.workerService.putWorker(this.worker.id, workerName).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError(error => {
+        console.error("Ошибка при обновлении имени работника", error);
+        return of([]);
+      })
+    )
+    .subscribe();
   }
 }

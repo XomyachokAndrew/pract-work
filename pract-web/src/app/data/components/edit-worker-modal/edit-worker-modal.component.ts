@@ -25,7 +25,7 @@ export class EditWorkerModalComponent {
 
   protected onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const cleanedValue = input.value.replace(/[^a-zA-Z0-9]/g, '');
+    const cleanedValue = input.value.replace(/[^а-яА-Яa-zA-Z0-9]/g, '');
     const maxLength = 200;
     const finalValue = this.checkLengthAndWarn(cleanedValue, maxLength);
 
