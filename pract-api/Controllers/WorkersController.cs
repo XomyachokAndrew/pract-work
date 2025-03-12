@@ -50,7 +50,12 @@ namespace Pract.Controllers
                 var newWorker = new WorkerWithDetailsDto
                 {
                     Id = item.Id,
-                    Name = $"{item.Surname} {item.FirstName} {item.Patronymic}",
+                    Name = new WorkerDto
+                    {
+                        Surname = item.Surname,
+                        FirstName = item.FirstName,
+                        Patronymic = item.Patronymic,
+                    },
                     Post = postDto ?? null,
                     Office = officeDto ?? null,
                 };
@@ -134,7 +139,12 @@ namespace Pract.Controllers
             var workersWithDetail = new WorkerWithDetailsDto
             {
                 Id = worker.Id,
-                Name = $"{worker.Surname} {worker.FirstName} {worker.Patronymic}",
+                Name = new WorkerDto
+                {
+                    Surname = worker.Surname,
+                    FirstName = worker.FirstName,
+                    Patronymic = worker.Patronymic,
+                },
                 Post = postDto ?? null,
                 Office = officeDto ?? null,
             };
