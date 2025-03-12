@@ -161,13 +161,11 @@ namespace Pract.Controllers
                 return BadRequest();
             }
 
-            var worker = new Worker
-            {
-                Surname = workerDto.Surname,
-                FirstName = workerDto.FirstName,
-                Patronymic = workerDto.Patronymic,
-                UpdatedAt = DateTime.Now,
-            };
+            var worker = await _context.Workers.FindAsync(id);
+            worker.Surname = workerDto.Surname;
+            worker.FirstName = workerDto.FirstName;
+            worker.Patronymic = workerDto.Patronymic;
+            worker.UpdatedAt = DateTime.Now;
 
             _context.Workers.Update(worker);
             await _context.SaveChangesAsync();
