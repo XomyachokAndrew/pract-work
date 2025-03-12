@@ -1,17 +1,24 @@
 table {
     inline-size: 100%;
     height: 10rem;
- 
+
+    th {
+        --tui-text-secondary: rgba(43, 41, 41, 0.63);
+        --tui-background-base: #0056a646;
+    }
+
     tr {
         block-size: 2.8125rem;
+
     }
- 
+
     td {
         &:first-child {
             inline-size: 10rem;
             font-weight: bold;
+            
         }
- 
+
         &:last-child {
             inline-size: 3rem;
         }
@@ -20,9 +27,32 @@ table {
 
 .table {
     width: 35rem;
-    height: 20rem;
+    margin-right: 2rem;
 }
- 
+
 .viewport {
     block-size: 15.625rem;
+}
+
+.title {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
+    .subtitle {
+        display: flex;
+        width: 100%;
+        margin: 1.25rem 0;
+        flex-direction: column;
+
+        &__text {
+            margin-bottom: 1.25rem;
+        }
+    }
+}
+
+.btn {
+    margin-left: .25rem;
+    --tui-text-action: rgb(88, 88, 88);
+    --tui-background-neutral-1: rgb(238, 237, 237);
 }

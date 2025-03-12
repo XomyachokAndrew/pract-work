@@ -8,7 +8,7 @@ import {
 } from '@angular/cdk/scrolling';
 import { } from '@angular/core';
 import { TuiTable } from '@taiga-ui/addon-table';
-import { TuiScrollable, TuiScrollbar } from '@taiga-ui/core';
+import { TuiButton, tuiDialog, TuiScrollable, TuiScrollbar } from '@taiga-ui/core';
 import { PostService } from '@services/post.service';
 import { OfficeService } from '@services/office.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -16,6 +16,7 @@ import { catchError, Observable, of } from 'rxjs';
 import { PostHistoryDto } from '@models/post-dtos';
 import { OfficeHistoryDto } from '@models/office-dtos';
 import { AsyncPipe, DatePipe } from '@angular/common';
+import { EditWorkerModalComponent } from '@components/edit-worker-modal/edit-worker-modal.component';
 
 @Component({
   selector: 'app-worker',
@@ -28,6 +29,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
     TuiTable,
     DatePipe,
     AsyncPipe,
+    TuiButton
   ],
   templateUrl: './worker.component.html',
   styleUrl: './worker.component.less',
@@ -46,15 +48,28 @@ export class WorkerComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (!history.state.worker) {
+      this.route.navigate(['workers']);
+      return;
+    }
     this.worker = history.state.worker;
     this.loadHistory(this.worker.id);
   }
 
+  /**
+   * Метод получающй историю определенного работника
+   * @param workerId Уникальный индетификатор работника
+   */
   async loadHistory(workerId: string) {
     this.postHistories = this.loadPostHistory(workerId);
     this.officeHistories = this.loadOfficeHistory(workerId);
   }
 
+  /**
+   * Метод получающй историю должностей определенного работника
+   * @param id Уникальный индетификатор работника
+   * @returns История должностей
+   */
   loadPostHistory(id: string): Observable<PostHistoryDto[]> {
     return this.postService.getHistoryPostForWorker(id)
       .pipe(
@@ -66,6 +81,11 @@ export class WorkerComponent implements OnInit {
       );
   }
 
+  /**
+   * Метод получающй историю офисов определенного работника
+   * @param id Уникальный индетификатор работника
+   * @returns История офисов
+   */
   loadOfficeHistory(id: string): Observable<OfficeHistoryDto[]> {
     return this.officeService.getHistoryOfficeForWorker(id)
       .pipe(
@@ -75,5 +95,30 @@ export class WorkerComponent implements OnInit {
           return of([]);
         })
       );
+  }
+
+  private readonly dialog = tuiDialog(EditWorkerModalComponent, {
+    dismissible: true,
+    size: 'm',
+    label: `Редактирование работника`,
+  });
+
+  onChange() {
+    this.dialog(this.worker.name)
+    .pipe(
+      takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке модального окна", error);
+          return of([]);
+        })
+    )
+    .subscribe({
+      next: (data) => {
+          console.info(`Dialog emitted data = ${data}`);
+      },
+      complete: () => {
+          console.info('Dialog closed');
+      },
+  });
   }
 }

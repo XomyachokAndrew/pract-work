@@ -1,4 +1,18 @@
 <div class="container">
+    <div class="title">
+        <span class="H2">
+            <b>
+                {{worker.name.surname}}
+                {{worker.name.firstName}}
+                {{worker.name.patronymic}}
+            </b>
+        </span>
+        <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn" (click)="onChange()"></button>
+        <div class="subtitle">
+            <span class="H3 subtitle__text">{{worker.post?.name || 'Должности нет'}} </span>
+            <span class="H3 subtitle__text"><b>Офис:</b> {{worker.office?.name || 'Отсутствует'}}</span>
+        </div>
+    </div>
     <div class="table">
         <tui-scrollbar>
             <cdk-virtual-scroll-viewport
@@ -14,7 +28,7 @@
                     tuiTable
                     [columns]="['name', 'createdAt', 'updatedAt']"
                 >
-                    <thead>
+                    <thead class="thead">
                         <tr tuiThGroup>
                             <th
                                 *tuiHead="'name'"
@@ -143,5 +157,4 @@
             </cdk-virtual-scroll-viewport>
         </tui-scrollbar>
     </div>
-    
 </div>
