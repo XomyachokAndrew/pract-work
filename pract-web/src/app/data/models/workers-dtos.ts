@@ -3,7 +3,7 @@ import { PostDto } from "./post-dtos";
 
 export interface WorkerDto {
     surname: string;
-    firstname: string;
+    firstName: string;
     patronymic: string;
 }
 
@@ -19,7 +19,7 @@ export interface WorkerPostDto {
 
 export interface WorkerWithDetailsDto {
     id: string;
-    name: string;
+    name: WorkerDto;
     post?: PostDto;
     office?: OfficeDto;
 }
