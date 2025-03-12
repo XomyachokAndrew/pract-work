@@ -1,19 +1,22 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { WorkerWithDetailsDto } from '@models/workers-dtos';
+import { OfficeHistoryDto } from '@models/office-dtos';
 import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WorkersService {
-  URL = `${environment.apiUrl}/workers`;
+export class OfficeService {
+  private URL = `${environment.apiUrl}/offices`
 
   constructor(private http: HttpClient) { }
 
-  getWorkers(): Observable<WorkerWithDetailsDto[]> {
-    return this.http.get<WorkerWithDetailsDto[]>(this.URL).pipe(catchError(this.handleError))
+  getHistoryOfficeForWorker(id: string): Observable<OfficeHistoryDto[]> {
+    const resultUrl = `${this.URL}/workers/${id}`;
+    return this.http
+      .get<OfficeHistoryDto[]>(resultUrl)
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
