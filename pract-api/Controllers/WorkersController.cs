@@ -30,7 +30,7 @@ namespace Pract.Controllers
                 PostDto? postDto = new();
                 OfficeDto? officeDto = new();
 
-                var workerPost = _context.WorkerPosts.Where(wp => wp.WorkerId == item.Id && wp.UpdatedAt == null).FirstOrDefault() ?? null;
+                var workerPost = await _context.WorkerPosts.Where(wp => wp.WorkerId == item.Id && wp.UpdatedAt == null).FirstOrDefaultAsync() ?? null;
                 if (workerPost != null)
                 {
                     var post = await _context.Posts.FindAsync(workerPost?.PostId) ?? null;
@@ -38,7 +38,7 @@ namespace Pract.Controllers
                     postDto.Name = post.Name;
                 }
 
-                var workerOffice = _context.WorkerOffices.Where(wo => wo.WorkerId == item.Id && wo.UpdatedAt == null).FirstOrDefault() ?? null;
+                var workerOffice = await _context.WorkerOffices.Where(wo => wo.WorkerId == item.Id && wo.UpdatedAt == null).FirstOrDefaultAsync() ?? null;
                 if (workerOffice != null)
                 {
                     var office = await _context.Offices.FindAsync(workerOffice?.OfficeId) ?? null;
