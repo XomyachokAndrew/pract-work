@@ -14,7 +14,7 @@ export interface WorkerOfficeDto {
 
 export interface WorkerPostDto {
     workerId: string;
-    PostId: string;
+    postId: string;
 }
 
 export interface WorkerWithDetailsDto {
