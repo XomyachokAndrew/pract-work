@@ -1,12 +1,12 @@
 <div class="card" tuiAppearance="primary" tuiCardLarge>
     <header tuiHeader [tuiAppearance]="'primary'">
         <h1 tuiTitle>
-            Кузьмин Андрей Игоревич
+            {{worker.name}}
         </h1>
     </header>
 
     <footer>
-        <button appearance="primary-grayscale" size="m" tuiButton type="button">
+        <button appearance="primary-grayscale" size="m" tuiButton type="button" (click)="onClick(worker)">
             Подробнее
         </button>
     </footer>
