@@ -1,0 +1,15 @@
+<div class="form">
+    <tui-textfield class="form__field" tuiTextfieldSize="m">
+        <label for="surname">Фамилия</label>
+        <input type="text" tuiTextfield value="{{data.surname}}" name="surname" (input)="onInput($event)">
+    </tui-textfield>
+    <tui-textfield class="form__field" tuiTextfieldSize="m">
+        <label for="firstName">Имя</label>
+        <input type="text" tuiTextfield value="{{data.firstName}}" name="firstName" (input)="onInput($event)">
+    </tui-textfield>
+    <tui-textfield class="form__field" tuiTextfieldSize="m">
+        <label for="patronymic">Отчество</label>
+        <input type="text" tuiTextfield value="{{data.patronymic}}" name="patronymic" (input)="onInput($event)">
+    </tui-textfield>
+</div>
+<button class="form__btn" (click)="submit()" tuiButton type="submit" appearance="secondary">Изменить</button>
