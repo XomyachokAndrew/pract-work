@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from '@models/workers-dtos';
+import { WorkerWithDetailsDto } from '@models/workers-dtos';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
@@ -17,9 +17,8 @@ import { PostHistoryDto } from '@models/post-dtos';
 import { OfficeHistoryDto } from '@models/office-dtos';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { EditNameModalComponent } from '@components/modals/edit-name-modal/edit-name-modal.component';
-import { WorkerService } from '@services/worker.service';
 import { EditPostModalComponent } from '@components/modals/edit-post-modal/edit-post-modal.component';
-import { WorkerStateService } from '@services/worker-state.service';
+import { WorkerStateService } from '@services/states/worker-state.service';
 import { EditOfficeModalComponent } from '@components/modals/edit-office-modal/edit-office-modal.component';
 
 @Component({
