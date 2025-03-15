@@ -1,0 +1,15 @@
+<div class="card" tuiAppearance="primary" tuiCardLarge>
+    <header tuiHeader [tuiAppearance]="'primary'">
+        <h1 tuiTitle>
+            {{worker.name.surname}}
+            {{worker.name.firstName}}
+            {{worker.name.patronymic}}
+        </h1>
+    </header>
+
+    <footer>
+        <button appearance="primary-grayscale" size="m" tuiButton type="button" (click)="onClick(worker)">
+            Подробнее
+        </button>
+    </footer>
+</div>

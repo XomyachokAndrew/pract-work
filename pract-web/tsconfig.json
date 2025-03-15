@@ -7,6 +7,9 @@
     "baseUrl": "./",
     "paths": {
       "@components/*": ["src/app/data/components/*"],
+      "@services/*": ["src/app/data/services/*"],
+      "@models/*": ["src/app/data/models/*"],
+      "@env/*": ["src/environments/*"],
       "@pages/*": ["src/app/pages/*"],
     },
     "strict": true,

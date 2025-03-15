@@ -30,7 +30,7 @@ namespace Pract.Controllers
                 PostDto? postDto = new();
                 OfficeDto? officeDto = new();
 
-                var workerPost = _context.WorkerPosts.Where(wp => wp.WorkerId == item.Id && wp.UpdatedAt == null).FirstOrDefault() ?? null;
+                var workerPost = await _context.WorkerPosts.Where(wp => wp.WorkerId == item.Id && wp.UpdatedAt == null).FirstOrDefaultAsync() ?? null;
                 if (workerPost != null)
                 {
                     var post = await _context.Posts.FindAsync(workerPost?.PostId) ?? null;
@@ -38,7 +38,7 @@ namespace Pract.Controllers
                     postDto.Name = post.Name;
                 }
 
-                var workerOffice = _context.WorkerOffices.Where(wo => wo.WorkerId == item.Id && wo.UpdatedAt == null).FirstOrDefault() ?? null;
+                var workerOffice = await _context.WorkerOffices.Where(wo => wo.WorkerId == item.Id && wo.UpdatedAt == null).FirstOrDefaultAsync() ?? null;
                 if (workerOffice != null)
                 {
                     var office = await _context.Offices.FindAsync(workerOffice?.OfficeId) ?? null;
@@ -50,7 +50,12 @@ namespace Pract.Controllers
                 var newWorker = new WorkerWithDetailsDto
                 {
                     Id = item.Id,
-                    Name = $"{item.Surname} {item.FirstName} {item.Patronymic}",
+                    Name = new WorkerDto
+                    {
+                        Surname = item.Surname,
+                        FirstName = item.FirstName,
+                        Patronymic = item.Patronymic,
+                    },
                     Post = postDto ?? null,
                     Office = officeDto ?? null,
                 };
@@ -134,7 +139,12 @@ namespace Pract.Controllers
             var workersWithDetail = new WorkerWithDetailsDto
             {
                 Id = worker.Id,
-                Name = $"{worker.Surname} {worker.FirstName} {worker.Patronymic}",
+                Name = new WorkerDto
+                {
+                    Surname = worker.Surname,
+                    FirstName = worker.FirstName,
+                    Patronymic = worker.Patronymic,
+                },
                 Post = postDto ?? null,
                 Office = officeDto ?? null,
             };
@@ -151,13 +161,11 @@ namespace Pract.Controllers
                 return BadRequest();
             }
 
-            var worker = new Worker
-            {
-                Surname = workerDto.Surname,
-                FirstName = workerDto.FirstName,
-                Patronymic = workerDto.Patronymic,
-                UpdatedAt = DateTime.Now,
-            };
+            var worker = await _context.Workers.FindAsync(id);
+            worker.Surname = workerDto.Surname;
+            worker.FirstName = workerDto.FirstName;
+            worker.Patronymic = workerDto.Patronymic;
+            worker.UpdatedAt = DateTime.Now;
 
             _context.Workers.Update(worker);
             await _context.SaveChangesAsync();
