@@ -3,16 +3,17 @@ import { WorkerWithDetailsDto } from '@models/workers-dtos';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
-import { NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import type { TuiContext, TuiStringHandler } from '@taiga-ui/cdk';
 import { TuiLet, tuiPure } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiLoader } from '@taiga-ui/core';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
-import { catchError, of } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { Post } from '@models/post-dtos';
 import { PostService } from '@services/post.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PostStateService } from '@services/states/post-state.service';
 import { LoadingComponent } from "../../loading/loading.component";
 
 @Component({
@@ -26,23 +27,21 @@ import { LoadingComponent } from "../../loading/loading.component";
     TuiLet,
     TuiSelectModule,
     TuiTextfieldControllerModule,
+    AsyncPipe,
     LoadingComponent
-],
+  ],
   templateUrl: './edit-post-modal.component.html',
   styleUrl: './edit-post-modal.component.less'
 })
-export class EditPostModalComponent implements OnInit {
-  protected posts!: Post[];
-  private destroyRef = inject(DestroyRef);
+export class EditPostModalComponent {
+  protected posts!: Observable<Post[] | null>;
   protected selectedPost: Post | null = null;
 
   constructor(
-    private postService: PostService,
-    private cdr: ChangeDetectorRef
-  ) { }
-
-  ngOnInit(): void {
-    this.loadPosts();
+    private postStateService: PostStateService,
+  ) {
+    const posts = this.postStateService.getPosts();
+    this.posts = posts;
   }
 
   @tuiPure
@@ -66,7 +65,7 @@ export class EditPostModalComponent implements OnInit {
     if (this.hasValue()) {
       if (this.selectedPost) {
         const selectedPostId = this.selectedPost;
-        
+
         if (this.data.post) {
           this.data.post.id = selectedPostId.id;
           this.data.post.name = selectedPostId.name
@@ -74,22 +73,5 @@ export class EditPostModalComponent implements OnInit {
       }
       this.context.completeWith(this.data);
     }
-  }
-
-  loadPosts() {
-    this.postService.getPost()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(error => {
-          console.error("Ошибка при загрузке истории должностей", error);
-          return of([]);
-        })
-      )
-      .subscribe({
-        next: data => {
-          this.posts = data ?? [];
-          this.cdr.markForCheck();
-        }
-      })
   }
 }

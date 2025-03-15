@@ -1,16 +1,14 @@
-import { NgForOf, NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Office } from '@models/office-dtos';
 import { WorkerWithDetailsDto } from '@models/workers-dtos';
-import { OfficeService } from '@services/office.service';
+import { OfficeStateService } from '@services/states/office-state.service';
 import { tuiPure, type TuiStringHandler, type TuiContext, TuiLet } from '@taiga-ui/cdk';
 import { TuiButton, TuiDataList, TuiDialogContext, TuiLoader } from '@taiga-ui/core';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
-import { catchError, of } from 'rxjs';
-import { LoadingComponent } from "../../loading/loading.component";
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-edit-office-modal',
@@ -23,23 +21,21 @@ import { LoadingComponent } from "../../loading/loading.component";
     TuiLet,
     TuiSelectModule,
     TuiTextfieldControllerModule,
+    AsyncPipe,
     LoadingComponent
-],
+  ],
   templateUrl: './edit-office-modal.component.html',
   styleUrl: './edit-office-modal.component.less'
 })
 export class EditOfficeModalComponent {
-  protected offices!: Office[];
-  private destroyRef = inject(DestroyRef);
+  protected offices$!: Observable<Office[] | null>;
   protected selectedOffice: Office | null = null;
 
   constructor(
-    private officeService: OfficeService,
-    private cdr: ChangeDetectorRef
-  ) { }
-
-  ngOnInit(): void {
-    this.loadOffice();
+    private officeStateService: OfficeStateService
+  ) {
+    const offices = this.officeStateService.getOffices();
+    this.offices$ = offices;
   }
 
   @tuiPure
@@ -69,22 +65,4 @@ export class EditOfficeModalComponent {
       this.context.completeWith(this.data);
     }
   }
-
-  loadOffice() {
-    this.officeService.getOffice()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError(error => {
-          console.error("Ошибка при загрузке истории должностей", error);
-          return of([]);
-        })
-      )
-      .subscribe({
-        next: data => {
-          this.offices = data ?? [];
-          this.cdr.markForCheck();
-        }
-      })
-  }
-
 }

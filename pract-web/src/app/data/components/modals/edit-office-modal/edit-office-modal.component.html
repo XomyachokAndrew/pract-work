@@ -1,5 +1,5 @@
 <div class="form">
-    <tui-select *tuiLet="offices" [tuiTextfieldLabelOutside]="true"
+    <tui-select *tuiLet="offices$ | async as offices" [tuiTextfieldLabelOutside]="true"
         [valueContent]="offices ? stringify(offices) : loading" [(ngModel)]="selectedOffice">
         Офис
         <ng-template tuiDataList>

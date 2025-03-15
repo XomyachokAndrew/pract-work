@@ -1,7 +1,7 @@
 import { Component, Input, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { WorkerWithDetailsDto } from '@models/workers-dtos';
-import { WorkerStateService } from '@services/worker-state.service';
+import { WorkerStateService } from '@services/states/worker-state.service';
 import { TuiAppearance, TuiButton, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 
