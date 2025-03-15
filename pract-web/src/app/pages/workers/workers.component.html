@@ -1,8 +1,13 @@
-<div class="btn-container">
-    <button tuiButton (click)="addWorker()">Добавить работника</button>
-</div>
-<div class="container">
+<ng-container *ngIf="workers; else loading">
+  <div class="btn-container">
+      <button tuiButton (click)="addWorker()">Добавить работника</button>
+  </div>
+  <div class="container">
     <div class="card-holder" *ngFor="let worker of workers | async">
-        <app-worker-card [worker]="worker"></app-worker-card>
+      <app-worker-card [worker]="worker"></app-worker-card>
     </div>
-</div>
+  </div>
+</ng-container>
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

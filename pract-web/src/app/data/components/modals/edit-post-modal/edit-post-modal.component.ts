@@ -14,6 +14,7 @@ import { Post } from '@models/post-dtos';
 import { PostService } from '@services/post.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PostStateService } from '@services/states/post-state.service';
+import { LoadingComponent } from "../../loading/loading.component";
 
 @Component({
   selector: 'app-edit-post-modal',
@@ -24,10 +25,10 @@ import { PostStateService } from '@services/states/post-state.service';
     TuiButton,
     TuiDataList,
     TuiLet,
-    TuiLoader,
     TuiSelectModule,
     TuiTextfieldControllerModule,
     AsyncPipe,
+    LoadingComponent
   ],
   templateUrl: './edit-post-modal.component.html',
   styleUrl: './edit-post-modal.component.less'

@@ -19,10 +19,10 @@ import { Observable } from 'rxjs';
     TuiButton,
     TuiDataList,
     TuiLet,
-    TuiLoader,
     TuiSelectModule,
     TuiTextfieldControllerModule,
     AsyncPipe,
+    LoadingComponent
   ],
   templateUrl: './edit-office-modal.component.html',
   styleUrl: './edit-office-modal.component.less'

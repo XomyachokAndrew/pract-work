@@ -8,6 +8,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { TuiButton, tuiDialog } from '@taiga-ui/core';
 import { AddWorkerModalComponent } from '@components/modals/add-worker-modal/add-worker-modal.component';
 import { WorkersStateService } from '@services/states/workers-state.service';
+import { LoadingComponent } from "../../data/components/loading/loading.component";
 
 @Component({
   selector: 'app-workers',
@@ -16,6 +17,7 @@ import { WorkersStateService } from '@services/states/workers-state.service';
     CommonModule,
     TuiButton,
     AsyncPipe,
+    LoadingComponent
   ],
   templateUrl: './workers.component.html',
   styleUrl: './workers.component.less',
