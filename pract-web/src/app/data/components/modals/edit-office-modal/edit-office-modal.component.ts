@@ -1,6 +1,7 @@
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LoadingComponent } from '@components/loading/loading.component';
 import { Office } from '@models/office-dtos';
 import { WorkerWithDetailsDto } from '@models/workers-dtos';
 import { OfficeStateService } from '@services/states/office-state.service';
