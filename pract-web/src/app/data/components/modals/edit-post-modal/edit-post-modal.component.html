@@ -1,5 +1,5 @@
 <div class="form">
-    <tui-select *tuiLet="posts" [tuiTextfieldLabelOutside]="true"
+    <tui-select *tuiLet="posts | async as posts" [tuiTextfieldLabelOutside]="true"
         [valueContent]="posts ? stringify(posts) : loading" [(ngModel)]="selectedPost">
         Должность
         <ng-template tuiDataList>
