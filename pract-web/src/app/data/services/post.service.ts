@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { PostHistoryDto } from '@models/post-dtos';
+import { Post, PostHistoryDto } from '@models/post-dtos';
 import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,12 @@ export class PostService {
   private URL = `${environment.apiUrl}/posts`
 
   constructor(private http: HttpClient) { }
+
+  getPost(): Observable<Post[]> {
+    return this.http
+    .get<Post[]>(this.URL)
+    .pipe(catchError(this.handleError));
+  }
 
   getHistoryPostForWorker(id: string): Observable<PostHistoryDto[]> {
     const resultUrl = `${this.URL}/workers/${id}`;
