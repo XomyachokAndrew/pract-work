@@ -41,10 +41,22 @@ export class WorkersComponent implements OnInit {
   }
 
   addWorker() {
-    const worker: WorkerDto = {
-      firstName: '',
-      surname: '',
-      patronymic: ''
+    const worker: WorkerWithDetailsDto = {
+      id: '',
+      name: {
+        firstName: '',
+        surname: '',
+        patronymic: ''
+      },
+      post: {
+        id: '',
+        name: ''
+      },
+      office: {
+        id: '',
+        name: '',
+        address: ''
+      }
     };
 
     this.dialog(worker)
