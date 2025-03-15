@@ -1,0 +1,17 @@
+<div class="form">
+    <tui-select *tuiLet="offices" [tuiTextfieldLabelOutside]="true"
+        [valueContent]="offices ? stringify(offices) : loading" [(ngModel)]="selectedOffice">
+        Офис
+        <ng-template tuiDataList>
+            <tui-data-list *ngIf="offices; else loading">
+                <button *ngFor="let item of offices" tuiOption type="button" [value]="item">
+                    {{ item.name }}
+                </button>
+            </tui-data-list>
+        </ng-template>
+        <ng-template #loading>
+            <tui-loader class="tui-space_vertical-3 loader" />
+        </ng-template>
+    </tui-select>
+    <button class="form__btn" (click)="submit()" tuiButton type="submit" appearance="secondary">Изменить</button>
+</div>
