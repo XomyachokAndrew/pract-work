@@ -1,6 +1,7 @@
 import { Component, Input, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { WorkerWithDetailsDto } from '@models/workers-dtos';
+import { WorkerStateService } from '@services/worker-state.service';
 import { TuiAppearance, TuiButton, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 
@@ -19,10 +20,13 @@ import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 export class WorkerCardComponent {
   @Input() worker!: WorkerWithDetailsDto;
 
-  constructor(private router: Router) {
-  }
+  constructor(
+    private router: Router,
+    private workerStateService: WorkerStateService
+  ) { }
 
   onClick(workerData: WorkerWithDetailsDto) {
-    this.router.navigate(['/worker'], { state: { worker: workerData } });
+    this.workerStateService.setWorker(workerData);
+    this.router.navigate(['/worker']);
   }
 }
