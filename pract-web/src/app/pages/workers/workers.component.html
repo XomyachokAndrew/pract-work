@@ -1,5 +1,8 @@
+<div class="btn-container">
+    <button tuiButton (click)="addWorker()">Добавить работника</button>
+</div>
 <div class="container">
-    <div class="card-holder" *ngFor="let worker of workers">
+    <div class="card-holder" *ngFor="let worker of workers | async">
         <app-worker-card [worker]="worker"></app-worker-card>
     </div>
 </div>

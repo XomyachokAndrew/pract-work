@@ -2,15 +2,20 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inje
 import { WorkerCardComponent } from '@components/worker-card/worker-card.component';
 import { WorkerService } from '@services/worker.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
-import { WorkerWithDetailsDto } from '@models/workers-dtos';
-import { CommonModule } from '@angular/common';
+import { catchError, Observable, of } from 'rxjs';
+import { WorkerDto, WorkerWithDetailsDto } from '@models/workers-dtos';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { TuiButton, tuiDialog } from '@taiga-ui/core';
+import { AddWorkerModalComponent } from '@components/modals/add-worker-modal/add-worker-modal.component';
+import { WorkersStateService } from '@services/states/workers-state.service';
 
 @Component({
   selector: 'app-workers',
   imports: [
     WorkerCardComponent,
     CommonModule,
+    TuiButton,
+    AsyncPipe,
   ],
   templateUrl: './workers.component.html',
   styleUrl: './workers.component.less',
@@ -18,31 +23,55 @@ import { CommonModule } from '@angular/common';
 })
 export class WorkersComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  protected workers!: WorkerWithDetailsDto[];
+  protected workers!: Observable<WorkerWithDetailsDto[] | null>;
+  private readonly dialog = tuiDialog(AddWorkerModalComponent, {
+    dismissible: true,
+    size: 'm',
+    label: `Редактирование работника`,
+  });
 
   constructor(
-    private workerService: WorkerService,
     private cdr: ChangeDetectorRef,
+    private workersStateService: WorkersStateService
   ) { }
 
   ngOnInit() {
-    this.loadWorkers();
+    const workers = this.workersStateService.getWorkers();
+    this.workers = workers;
   }
 
-  loadWorkers() {
-    this.workerService.getWorkers()
+  addWorker() {
+    const worker: WorkerDto = {
+      firstName: '',
+      surname: '',
+      patronymic: ''
+    };
+
+    this.dialog(worker)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(error => {
-          console.error("Ошибка при загрузке данных о рабочих", error);
-          return of(null);
+          console.error("Ошибка при загрузке модального окна", error);
+          return of([]);
         })
       )
       .subscribe({
         next: (data) => {
-          this.workers = data?.sort((a, b) => a.name.firstName.localeCompare(b.name.firstName)) ?? [];
-          this.cdr.markForCheck();
-        }
+          console.info(`Dialog emitted data = ${data}`);
+          if (Array.isArray(data)) {
+            // Обработка случая, когда data является массивом
+            console.error('Received an array instead of WorkerDto');
+          } else if (data) {
+            this.workersStateService.addWorker(data);
+            const workers = this.workersStateService.getWorkers();
+            console.log('');
+            this.workers = workers;
+            this.cdr.markForCheck();
+          }
+        },
+        complete: () => {
+          console.info('Dialog closed');
+        },
       });
   }
 }
