@@ -1,23 +1,62 @@
 import { Component, inject } from '@angular/core';
-import { WorkerDto } from '@models/workers-dtos';
 import { TuiAlertService, TuiDialogContext, TuiTextfield } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiLoader } from '@taiga-ui/core';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Office } from '@models/office-dtos';
+import { WorkerWithDetailsDto } from '@models/workers-dtos';
+import { tuiPure, type TuiStringHandler, type TuiContext, TuiLet } from '@taiga-ui/cdk';
+import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
+import { Post } from '@models/post-dtos';
+import { OfficeStateService } from '@services/states/office-state.service';
+import { PostStateService } from '@services/states/post-state.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-add-worker-modal',
   imports: [
     TuiButton,
     TuiTextfield,
+    FormsModule,
+    NgForOf,
+    NgIf,
+    TuiDataList,
+    TuiLet,
+    TuiLoader,
+    TuiSelectModule,
+    TuiTextfieldControllerModule,
+    AsyncPipe,
   ],
   templateUrl: './add-worker-modal.component.html',
   styleUrl: './add-worker-modal.component.less'
 })
 export class AddWorkerModalComponent {
   private readonly alerts = inject(TuiAlertService);
-  public readonly context = injectContext<TuiDialogContext<WorkerDto, WorkerDto>>();
+  public readonly context = injectContext<TuiDialogContext<WorkerWithDetailsDto, WorkerWithDetailsDto>>();
+  protected offices$!: Observable<Office[] | null>;
+  protected selectedOffice: Office | null = null;
+  protected posts$!: Observable<Post[] | null>;
+  protected selectedPost: Post | null = null;
 
-  protected get data(): WorkerDto {
+  constructor (
+    private officeStateService: OfficeStateService,
+    private postStateService: PostStateService
+  ) {
+    const offices = this.officeStateService.getOffices();
+    this.offices$ = offices;
+    const posts = this.postStateService.getPosts();
+    this.posts$ = posts;
+  }
+
+  @tuiPure
+  protected stringify(items: readonly any[]): TuiStringHandler<TuiContext<any>> {
+    const map = new Map(items.map(({ id, name }) => [id, name] as [string, string]));
+
+    return ({ $implicit }: TuiContext<any>) => map.get($implicit.id) || '';
+  }
+
+  protected get data(): WorkerWithDetailsDto {
     return this.context.data;
   }
 
@@ -27,6 +66,21 @@ export class AddWorkerModalComponent {
 
   protected submit(): void {
     if (this.hasValue()) {
+      if (this.selectedPost) {
+        const selectedPostId = this.selectedPost;
+        
+        if (this.data.post) {
+          this.data.post.id = selectedPostId.id;
+          this.data.post.name = selectedPostId.name
+        }
+      }
+      if (this.selectedOffice && this.data.office) {
+        const selectedOfficeId = this.selectedOffice;
+        this.data.office.id = selectedOfficeId.id;
+        this.data.office.name = selectedOfficeId.name
+      }
+      console.log(this.data);
+      
       this.context.completeWith(this.data);
     }
   }
@@ -40,13 +94,13 @@ export class AddWorkerModalComponent {
     input.value = finalValue;
     switch (input.name) {
       case 'surname':
-        this.data.surname = finalValue;
+        this.data.name.surname = finalValue;
         break;
       case 'firstName':
-        this.data.firstName = finalValue;
+        this.data.name.firstName = finalValue;
         break;
       case 'patronymic':
-        this.data.patronymic = finalValue;
+        this.data.name.patronymic = finalValue;
         break;
       default:
         break;
