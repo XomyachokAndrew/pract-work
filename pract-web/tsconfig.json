@@ -8,9 +8,9 @@
     "paths": {
       "@components/*": ["src/app/data/components/*"],
       "@services/*": ["src/app/data/services/*"],
-      "@pages/*": ["src/app/pages/*"],
       "@models/*": ["src/app/data/models/*"],
       "@env/*": ["src/environments/*"],
+      "@pages/*": ["src/app/pages/*"],
     },
     "strict": true,
     "noImplicitOverride": true,
