@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-workers',
   imports: [
     WorkerCardComponent,
-    CommonModule
+    CommonModule,
   ],
   templateUrl: './workers.component.html',
   styleUrl: './workers.component.less',
@@ -40,7 +40,7 @@ export class WorkersComponent implements OnInit {
       )
       .subscribe({
         next: (data) => {
-          this.workers = data ?? [];
+          this.workers = data?.sort((a, b) => a.name.firstName.localeCompare(b.name.firstName)) ?? [];
           this.cdr.markForCheck();
         }
       });
