@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { WorkerDto, WorkerWithDetailsDto } from '@models/workers-dtos';
+import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from '@models/workers-dtos';
 import { environment } from '@env/environment';
 
 @Injectable({
@@ -29,6 +29,22 @@ export class WorkerService {
 
     return this.http
       .put<WorkerDto>(apiURL, workerName, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  putPostWorker(workerPost: WorkerPostDto): Observable<WorkerPostDto> {
+    const apiURL = `${this.URL}/posts`;
+
+    return this.http
+      .post<WorkerPostDto>(apiURL, workerPost)
+      .pipe(catchError(this.handleError));
+  }
+
+  putOfficeWorker(workerOffice: WorkerOfficeDto): Observable<WorkerOfficeDto> {
+    const apiURL = `${this.URL}/offices`;
+
+    return this.http
+      .post<WorkerOfficeDto>(apiURL, workerOffice)
       .pipe(catchError(this.handleError));
   }
 
