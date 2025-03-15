@@ -10,7 +10,7 @@
         <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
             (click)="onChange('name')"></button>
         <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
-            (click)="onChange('name')"></button>
+            (click)="onChange('name')"></button> <!-- TODO Сделать снятие с должности и офиса, а таеже удаление работника -->
         <div class="subtitle">
             <span class="H3 subtitle__text">
                 {{worker.post?.name || 'Должности нет'}}
