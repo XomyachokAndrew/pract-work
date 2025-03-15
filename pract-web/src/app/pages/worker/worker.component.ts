@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { WorkerDto, WorkerWithDetailsDto } from '@models/workers-dtos';
+import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from '@models/workers-dtos';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
@@ -12,12 +12,15 @@ import { TuiButton, tuiDialog, TuiScrollable, TuiScrollbar } from '@taiga-ui/cor
 import { PostService } from '@services/post.service';
 import { OfficeService } from '@services/office.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, isObservable, Observable, of } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { PostHistoryDto } from '@models/post-dtos';
 import { OfficeHistoryDto } from '@models/office-dtos';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { EditWorkerModalComponent } from '@components/edit-worker-modal/edit-worker-modal.component';
+import { EditNameModalComponent } from '@components/modals/edit-name-modal/edit-name-modal.component';
 import { WorkerService } from '@services/worker.service';
+import { EditPostModalComponent } from '@components/modals/edit-post-modal/edit-post-modal.component';
+import { WorkerStateService } from '@services/worker-state.service';
+import { EditOfficeModalComponent } from '@components/modals/edit-office-modal/edit-office-modal.component';
 
 @Component({
   selector: 'app-worker',
@@ -46,16 +49,18 @@ export class WorkerComponent implements OnInit {
     private route: Router,
     private postService: PostService,
     private officeService: OfficeService,
-    private workerService: WorkerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private workerStateService: WorkerStateService,
   ) { }
 
   ngOnInit(): void {
-    if (!history.state.worker) {
+    const worker = this.workerStateService.getWorker();
+    if (!worker) {
       this.route.navigate(['workers']);
       return;
     }
-    this.worker = history.state.worker;
+    this.worker = worker;
+    
     this.loadHistory(this.worker.id);
   }
 
@@ -100,14 +105,45 @@ export class WorkerComponent implements OnInit {
       );
   }
 
-  private readonly dialog = tuiDialog(EditWorkerModalComponent, {
+  private readonly dialogName = tuiDialog(EditNameModalComponent, {
     dismissible: true,
     size: 'm',
     label: `Редактирование работника`,
   });
 
-  onChange() {
-    this.dialog(this.worker.name)
+  private readonly dialogPost = tuiDialog(EditPostModalComponent, {
+    dismissible: true,
+    size: 'm',
+    label: `Редактирование работника`,
+  });
+
+  private readonly dialogOffice = tuiDialog(EditOfficeModalComponent, {
+    dismissible: true,
+    size: 'm',
+    label: `Редактирование работника`,
+  });
+
+  onChange(obj: string) {
+    console.log(obj);
+
+    switch (obj) {
+      case 'name':
+        this.changeName();
+        break;
+      case 'post':
+        this.changePost();
+        break;
+      case 'office':
+        this.changeOffice();
+        break;
+      default:
+        break;
+    }
+
+  }
+
+  changeName() {
+    this.dialogName(this.worker.name)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(error => {
@@ -122,10 +158,12 @@ export class WorkerComponent implements OnInit {
             // Обработка случая, когда data является массивом
             console.error('Received an array instead of WorkerDto');
           } else if (data) {
-            const workerName: WorkerDto = data;
-            this.putWorker(workerName);
-            history.state.worker.name = workerName;
-            this.worker = history.state.worker;
+            this.workerStateService.setWorkerName(this.worker.id, data);
+            const worker = this.workerStateService.getWorker();
+            if (!worker) {
+              return;
+            } 
+            this.worker = worker;
             this.cdr.markForCheck();
           }
         },
@@ -135,14 +173,67 @@ export class WorkerComponent implements OnInit {
       });
   }
 
-  putWorker(workerName: WorkerDto) {
-    this.workerService.putWorker(this.worker.id, workerName).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError(error => {
-        console.error("Ошибка при обновлении имени работника", error);
-        return of([]);
-      })
-    )
-    .subscribe();
+  changePost() {
+    this.dialogPost(this.worker)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке модального окна", error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          console.info(`Dialog emitted data = ${data}`);
+          if (Array.isArray(data)) {
+            // Обработка случая, когда data является массивом
+            console.error('Received an array instead of WorkerDto');
+          } else if (data) {
+            this.workerStateService.setWorkerPost(data);
+            const worker = this.workerStateService.getWorker();
+            if (!worker) {
+              return;
+            } 
+            this.worker = worker;
+            this.postHistories = this.loadPostHistory(this.worker.id);
+            this.cdr.markForCheck();
+          }
+        },
+        complete: () => {
+          console.info('Dialog closed');
+        },
+      });
+  }
+
+  changeOffice() {
+    this.dialogOffice(this.worker)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке модального окна", error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          console.info(`Dialog emitted data = ${data}`);
+          if (Array.isArray(data)) {
+            // Обработка случая, когда data является массивом
+            console.error('Received an array instead of WorkerDto');
+          } else if (data) {
+            this.workerStateService.setWorkerOffice(data);
+            const worker = this.workerStateService.getWorker();
+            if (!worker) {
+              return;
+            } 
+            this.worker = worker;
+            this.officeHistories = this.loadOfficeHistory(this.worker.id);
+            this.cdr.markForCheck();
+          }
+        },
+        complete: () => {
+          console.info('Dialog closed');
+        },
+      });
   }
 }
