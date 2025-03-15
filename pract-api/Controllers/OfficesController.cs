@@ -130,6 +130,27 @@ namespace Pract.Controllers
             return NoContent();
         }
 
+        // DELETE api/offices/workers/{id}
+        [HttpDelete("workers/{id}")]
+        public async Task<IActionResult> DeleteOfficeWorker(Guid id)
+        {
+            var workerOffice = await _context.WorkerOffices
+                .Where(wp => wp.WorkerId == id && wp.UpdatedAt == null)
+                .FirstOrDefaultAsync();
+
+            if (workerOffice == null || workerOffice.IsDeleted)
+            {
+                return NotFound();
+            }
+
+            workerOffice.UpdatedAt = DateTime.Now;
+
+            _context.WorkerOffices.Update(workerOffice);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool OfficeExists(Guid id)
         {
             return _context.Offices.Any(e => e.Id == id);

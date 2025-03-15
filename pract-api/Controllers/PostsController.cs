@@ -127,6 +127,27 @@ namespace Pract.Controllers
             return NoContent();
         }
 
+        // DELETE api/posts/workers/{id}
+        [HttpDelete("workers/{id}")]
+        public async Task<IActionResult> DeletePostWorker(Guid id)
+        {
+            var workerPost = await _context.WorkerPosts
+                .Where(wp => wp.WorkerId == id && wp.UpdatedAt == null)
+                .FirstOrDefaultAsync();
+
+            if (workerPost == null || workerPost.IsDeleted)
+            {
+                return NotFound();
+            }
+
+            workerPost.UpdatedAt = DateTime.Now;
+
+            _context.WorkerPosts.Update(workerPost);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool PostExists(Guid id)
         {
             return _context.Posts.Any(e => e.Id == id);
