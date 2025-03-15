@@ -48,6 +48,12 @@ export class WorkerService {
       .pipe(catchError(this.handleError));
   }
 
+  postWorker(workerDto: WorkerDto): Observable<WorkerDto> {
+    return this.http
+      .post<WorkerDto>(this.URL, workerDto)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
