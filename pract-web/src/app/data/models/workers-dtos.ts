@@ -2,6 +2,7 @@ import { OfficeDto } from "./office-dtos";
 import { PostDto } from "./post-dtos";
 
 export interface WorkerDto {
+    id?: string;
     surname: string;
     firstName: string;
     patronymic: string;
