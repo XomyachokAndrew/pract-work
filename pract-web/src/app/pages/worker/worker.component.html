@@ -7,21 +7,27 @@
                 {{worker.name.patronymic}}
             </b>
         </span>
-        <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn"
+        <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
+            (click)="onChange('name')"></button>
+        <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
             (click)="onChange('name')"></button>
         <div class="subtitle">
             <span class="H3 subtitle__text">
                 {{worker.post?.name || 'Должности нет'}}
-                <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn"
+                <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
                     (click)="onChange('post')"></button>
+                <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
+                    (click)="onChange('name')"></button>
             </span>
             <span class="H3 subtitle__text">
                 <b>
                     Офис:
                 </b>
                 {{worker.office?.name || 'Отсутствует'}}
-                <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn"
+                <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
                     (click)="onChange('office')"></button>
+                <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
+                    (click)="onChange('name')"></button>
             </span>
         </div>
     </div>
