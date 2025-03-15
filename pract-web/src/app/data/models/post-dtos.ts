@@ -1,3 +1,11 @@
+export interface Post {
+    id: string;
+    name: string;
+    isDeleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface PostDto {
     id: string;
     name: string;
