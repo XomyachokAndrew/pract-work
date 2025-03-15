@@ -13,6 +13,7 @@ import { catchError, of } from 'rxjs';
 import { Post } from '@models/post-dtos';
 import { PostService } from '@services/post.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadingComponent } from "../../loading/loading.component";
 
 @Component({
   selector: 'app-edit-post-modal',
@@ -23,10 +24,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     TuiButton,
     TuiDataList,
     TuiLet,
-    TuiLoader,
     TuiSelectModule,
     TuiTextfieldControllerModule,
-  ],
+    LoadingComponent
+],
   templateUrl: './edit-post-modal.component.html',
   styleUrl: './edit-post-modal.component.less'
 })

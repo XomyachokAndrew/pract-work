@@ -5,13 +5,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { WorkerWithDetailsDto } from '@models/workers-dtos';
 import { CommonModule } from '@angular/common';
+import { LoadingComponent } from "../../data/components/loading/loading.component";
 
 @Component({
   selector: 'app-workers',
   imports: [
     WorkerCardComponent,
     CommonModule,
-  ],
+    LoadingComponent
+],
   templateUrl: './workers.component.html',
   styleUrl: './workers.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,

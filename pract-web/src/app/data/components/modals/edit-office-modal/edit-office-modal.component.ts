@@ -10,6 +10,7 @@ import { TuiButton, TuiDataList, TuiDialogContext, TuiLoader } from '@taiga-ui/c
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { catchError, of } from 'rxjs';
+import { LoadingComponent } from "../../loading/loading.component";
 
 @Component({
   selector: 'app-edit-office-modal',
@@ -20,10 +21,10 @@ import { catchError, of } from 'rxjs';
     TuiButton,
     TuiDataList,
     TuiLet,
-    TuiLoader,
     TuiSelectModule,
     TuiTextfieldControllerModule,
-  ],
+    LoadingComponent
+],
   templateUrl: './edit-office-modal.component.html',
   styleUrl: './edit-office-modal.component.less'
 })
