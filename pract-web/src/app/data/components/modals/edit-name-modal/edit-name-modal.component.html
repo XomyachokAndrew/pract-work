@@ -11,5 +11,5 @@
         <label for="patronymic">Отчество</label>
         <input type="text" tuiTextfield value="{{data.patronymic}}" name="patronymic" (input)="onInput($event)">
     </tui-textfield>
+    <button class="form__btn" (click)="submit()" tuiButton type="submit" appearance="secondary">Изменить</button>
 </div>
-<button class="form__btn" (click)="submit()" tuiButton type="submit" appearance="secondary">Изменить</button>
