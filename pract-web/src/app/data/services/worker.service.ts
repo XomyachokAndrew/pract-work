@@ -54,6 +54,13 @@ export class WorkerService {
       .pipe(catchError(this.handleError));
   }
 
+  deleteWorker(id: string) {
+    const resultUrl = `${this.URL}/${id}`;
+    return this.http
+      .delete(resultUrl)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

@@ -25,6 +25,13 @@ export class OfficeService {
       .pipe(catchError(this.handleError));
   }
 
+  deleteOfficeWorker(id: string) {
+    const resultUrl = `${this.URL}/workers/${id}`;
+    return this.http
+      .delete(resultUrl)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
