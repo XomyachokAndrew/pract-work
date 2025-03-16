@@ -3,6 +3,8 @@ import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from 
 import { WorkerService } from '../worker.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
+import { PostService } from '@services/post.service';
+import { OfficeService } from '@services/office.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,11 @@ export class WorkerStateService {
   private destroyRef = inject(DestroyRef);
 
 
-  constructor(private workerService: WorkerService) { }
+  constructor(
+    private workerService: WorkerService,
+    private postService: PostService,
+    private officeService: OfficeService,
+  ) { }
 
   setWorker(worker: WorkerWithDetailsDto): void {
     this.worker = worker;
@@ -20,7 +26,7 @@ export class WorkerStateService {
 
   setWorkerName(id: string, worker: WorkerDto) {
     const workerName: WorkerDto = worker;
-            this.putWorker(id, workerName);
+    this.putWorker(id, workerName);
     if (this.worker) {
       this.worker.name = worker;
     }
@@ -54,6 +60,51 @@ export class WorkerStateService {
 
   getWorker(): WorkerWithDetailsDto | null {
     return this.worker;
+  }
+
+  deleteWorker(id: string) {
+    this.workerService.deleteWorker(id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при обновлении должности работника", error);
+          return of([]);
+        })
+      )
+      .subscribe();
+    this.worker = null;
+  }
+
+  deleteOfficeWorker(id: string) {
+    this.officeService.deleteOfficeWorker(id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при обновлении должности работника", error);
+          return of([]);
+        })
+      )
+      .subscribe();
+    if (this.worker?.office) {
+      this.worker.office = null;
+
+    }
+  }
+
+  deletePostWorker(id: string) {
+    this.postService.deletePostWorker(id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при обновлении должности работника", error);
+          return of([]);
+        })
+      )
+      .subscribe();
+
+    if (this.worker?.post) {
+      this.worker.post = null;
+    }
   }
 
   private putPostWorker(workerPost: WorkerPostDto) {

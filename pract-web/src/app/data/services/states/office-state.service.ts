@@ -24,13 +24,13 @@ export class OfficeStateService {
   }
 
   private loadOffices(): Observable<Office[] | null> {
-      return this.officeService.getOffice()
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          catchError(error => {
-            console.error("Ошибка при загрузке данных о рабочих", error);
-            return of(null);
-          })
-        );
-    }
+    return this.officeService.getOffice()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке данных о рабочих", error);
+          return of(null);
+        })
+      );
+  }
 }

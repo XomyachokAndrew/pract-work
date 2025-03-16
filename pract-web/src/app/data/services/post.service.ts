@@ -14,14 +14,21 @@ export class PostService {
 
   getPost(): Observable<Post[]> {
     return this.http
-    .get<Post[]>(this.URL)
-    .pipe(catchError(this.handleError));
+      .get<Post[]>(this.URL)
+      .pipe(catchError(this.handleError));
   }
 
   getHistoryPostForWorker(id: string): Observable<PostHistoryDto[]> {
     const resultUrl = `${this.URL}/workers/${id}`;
     return this.http
       .get<PostHistoryDto[]>(resultUrl)
+      .pipe(catchError(this.handleError));
+  }
+
+  deletePostWorker(id: string) {
+    const resultUrl = `${this.URL}/workers/${id}`;
+    return this.http
+      .delete(resultUrl)
       .pipe(catchError(this.handleError));
   }
 
