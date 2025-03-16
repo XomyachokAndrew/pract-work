@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { WorkerCardComponent } from '@components/worker-card/worker-card.component';
+import { WorkerCardComponent } from '@components/cards/worker-card/worker-card.component';
 import { WorkerService } from '@services/worker.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, Observable, of } from 'rxjs';
