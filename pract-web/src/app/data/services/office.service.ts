@@ -12,7 +12,7 @@ export class OfficeService {
 
   constructor(private http: HttpClient) { }
 
-  getOffice(): Observable<Office[]> {
+  getOffices(): Observable<Office[]> {
     return this.http
       .get<Office[]>(this.URL)
       .pipe(catchError(this.handleError));

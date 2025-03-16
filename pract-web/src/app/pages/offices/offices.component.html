@@ -1,0 +1,10 @@
+<ng-container *ngIf="offices; else loading">
+    <div class="container">
+      <div class="card-holder" *ngFor="let office of offices | async">
+        <app-office-card [office]="office"></app-office-card>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #loading>
+      <app-loading></app-loading>
+  </ng-template>
