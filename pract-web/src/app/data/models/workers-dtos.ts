@@ -21,8 +21,8 @@ export interface WorkerPostDto {
 export interface WorkerWithDetailsDto {
     id: string;
     name: WorkerDto;
-    post?: PostDto;
-    office?: OfficeDto;
+    post?: PostDto | null;
+    office?: OfficeDto | null;
 }
 
 export interface WorkerWithOfficeDto {
