@@ -20,6 +20,8 @@ import { EditNameModalComponent } from '@components/modals/edit-name-modal/edit-
 import { EditPostModalComponent } from '@components/modals/edit-post-modal/edit-post-modal.component';
 import { WorkerStateService } from '@services/states/worker-state.service';
 import { EditOfficeModalComponent } from '@components/modals/edit-office-modal/edit-office-modal.component';
+import { PostStateService } from '@services/states/post-state.service';
+import { OfficeStateService } from '@services/states/office-state.service';
 
 @Component({
   selector: 'app-worker',
@@ -59,7 +61,7 @@ export class WorkerComponent implements OnInit {
       return;
     }
     this.worker = worker;
-    
+
     this.loadHistory(this.worker.id);
   }
 
@@ -161,7 +163,7 @@ export class WorkerComponent implements OnInit {
             const worker = this.workerStateService.getWorker();
             if (!worker) {
               return;
-            } 
+            }
             this.worker = worker;
             this.cdr.markForCheck();
           }
@@ -192,7 +194,7 @@ export class WorkerComponent implements OnInit {
             const worker = this.workerStateService.getWorker();
             if (!worker) {
               return;
-            } 
+            }
             this.worker = worker;
             this.postHistories = this.loadPostHistory(this.worker.id);
             this.cdr.markForCheck();
@@ -224,7 +226,7 @@ export class WorkerComponent implements OnInit {
             const worker = this.workerStateService.getWorker();
             if (!worker) {
               return;
-            } 
+            }
             this.worker = worker;
             this.officeHistories = this.loadOfficeHistory(this.worker.id);
             this.cdr.markForCheck();
@@ -234,5 +236,22 @@ export class WorkerComponent implements OnInit {
           console.info('Dialog closed');
         },
       });
+  }
+
+  deleteClick(obj: string) {
+    switch (obj) {
+      case 'worker':
+        this.workerStateService.deleteWorker(this.worker.id);
+        this.route.navigate(['workers']);
+        break;
+      case 'post':
+        this.workerStateService.deletePostWorker(this.worker.id);
+        break;
+      case 'office':
+        this.workerStateService.deleteOfficeWorker(this.worker.id);
+        break;
+      default:
+        break;
+    }
   }
 }
