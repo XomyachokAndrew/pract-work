@@ -6,12 +6,12 @@
             </b>
         </span>
         <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info" (click)="onChange('name')"></button>
-        <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger" (click)="onDelete()"></button>
+        <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger" (click)="onDelete('office')"></button>
         <div class="subtitle">
             <span class="H3 subtitle__text">
                 <b>Адресс: </b>{{office?.address}}
                 <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info" (click)="onChange('address')"></button>
-                <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger" (click)="onDelete()"></button>
+                <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger" (click)="onDelete('address')"></button>
             </span>
         </div>
     </div><br>

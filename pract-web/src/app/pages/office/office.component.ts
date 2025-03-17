@@ -139,7 +139,26 @@ export class OfficeComponent {
       });
   }
 
-  onDelete() {
-
+  onDelete(obj: string) {
+    switch (obj) {
+      case 'address':
+        if (!this.office) {
+          return;
+        }
+        this.office.address = '';
+        this.officeStateService.setAddress(this.office);
+        const office = this.officeStateService.getOffice();
+        if (!office) {
+          return;
+        }
+        this.office = office;
+        break;
+      case 'office':
+        this.officeStateService.deleteOffice();
+        this.route.navigate(['offices']);
+        break;
+      default:
+        break;
+    }
   }
 }

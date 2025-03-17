@@ -51,6 +51,22 @@ export class OfficeStateService {
     return this.workers;
   }
 
+  deleteOffice() {
+    if (!this.office) {
+      return;
+    }
+    this.officeService.deleteOffice(this.office.id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при обновлении должности работника", error);
+          return of([]);
+        })
+      )
+      .subscribe();
+    this.office = null;
+  }
+
   private putOffice(office: Office) {
     if (!this.office) {
       return;
