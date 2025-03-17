@@ -13,7 +13,6 @@ export class WorkerStateService {
   private worker: WorkerWithDetailsDto | null = null;
   private destroyRef = inject(DestroyRef);
 
-
   constructor(
     private workerService: WorkerService,
     private postService: PostService,

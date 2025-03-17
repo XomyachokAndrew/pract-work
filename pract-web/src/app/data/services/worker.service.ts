@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from '@models/workers-dtos';
+import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto, WorkerWithPostDto } from '@models/workers-dtos';
 import { environment } from '@env/environment';
 
 @Injectable({
@@ -16,6 +16,13 @@ export class WorkerService {
   getWorkers(): Observable<WorkerWithDetailsDto[]> {
     return this.http
       .get<WorkerWithDetailsDto[]>(this.URL)
+      .pipe(catchError(this.handleError));
+  }
+
+  getWorkersInOffice(id: string): Observable<WorkerWithPostDto[] | null> {
+    const resultUrl = `${this.URL}/offices/${id}`;
+    return this.http
+      .get<WorkerWithPostDto[]>(resultUrl)
       .pipe(catchError(this.handleError));
   }
 

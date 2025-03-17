@@ -1,35 +1,45 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
-import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from '@models/workers-dtos';
-import { WorkerService } from '../worker.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, Observable, of } from 'rxjs';
 import { Office } from '@models/office-dtos';
-import { OfficeService } from '@services/office.service';
+import { WorkerService } from '@services/worker.service';
+import { WorkerWithPostDto } from '@models/workers-dtos';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfficeStateService {
-  private offices: Observable<Office[] | null>;
+  protected office!: Office | null;
+  protected workers!: Observable<WorkerWithPostDto[] | null>;
   private destroyRef = inject(DestroyRef);
 
   constructor(
-    private officeService: OfficeService
-  ) {
-    this.offices = this.loadOffices();
+    private workerService: WorkerService,
+  ) { }
+
+  setOffice(office: Office) {
+    this.office = office;
   }
 
-  getOffices() {
-    return this.offices;
+  getOffice() {
+    return this.office;
   }
 
-  private loadOffices(): Observable<Office[] | null> {
-    return this.officeService.getOffices()
+  getWorkersInOffices() {
+    if (!this.office) {
+      return;
+    }
+    this.workers = this.getWorkersInOffice(this.office.id);
+    return this.workers;
+  }
+
+  private getWorkersInOffice(id: string): Observable<WorkerWithPostDto[] | null> {
+    return this.workerService.getWorkersInOffice(id)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(error => {
-          console.error("Ошибка при загрузке данных о рабочих", error);
-          return of(null);
+          console.error("Ошибка при обновлении должности работника", error);
+          return of([]);
         })
       );
   }

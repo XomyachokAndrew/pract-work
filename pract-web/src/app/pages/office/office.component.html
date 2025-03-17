@@ -1,0 +1,46 @@
+<div class="container">
+    <div class="title">
+        <span class="H2">
+            <b>
+                {{office?.name}}
+            </b>
+        </span>
+        <div class="subtitle">
+            <span class="H3 subtitle__text">
+                <b>Адресс: </b>{{office?.address}}
+            </span>
+        </div>
+    </div><br>
+
+    <div class="table">
+        <tui-scrollbar>
+            <cdk-virtual-scroll-viewport #viewport appendOnly tuiScrollable class="viewport tui-zero-scrollbar"
+                [itemSize]="45" [maxBufferPx]="500" [minBufferPx]="400">
+                <table tuiTable [columns]="['postId', 'workerId']">
+                    <thead class="thead">
+                        <tr tuiThGroup>
+                            <th *tuiHead="'postId'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Имя работника
+                            </th>
+                            <th *tuiHead="'workerId'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Должность
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody tuiTbody>
+                        <tr *cdkVirtualFor="let item of workers | async | tuiTableSort" tuiTr>
+                            <td *tuiCell="'postId'" tuiTd>
+                                {{ item.name }}
+                            </td>
+                            <td *tuiCell="'workerId'" tuiTd>
+                                {{ item.post?.name ?? 'Отсутствует' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </tui-scrollbar>
+    </div>
+</div>

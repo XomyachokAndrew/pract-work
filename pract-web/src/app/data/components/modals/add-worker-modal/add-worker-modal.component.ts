@@ -12,6 +12,7 @@ import { Post } from '@models/post-dtos';
 import { OfficeStateService } from '@services/states/office-state.service';
 import { PostStateService } from '@services/states/post-state.service';
 import { Observable } from 'rxjs';
+import { OfficesStateService } from '@services/states/offices-state.service';
 
 @Component({
   selector: 'app-add-worker-modal',
@@ -40,10 +41,10 @@ export class AddWorkerModalComponent {
   protected selectedPost: Post | null = null;
 
   constructor (
-    private officeStateService: OfficeStateService,
+    private officesStateService: OfficesStateService,
     private postStateService: PostStateService
   ) {
-    const offices = this.officeStateService.getOffices();
+    const offices = this.officesStateService.getOffices();
     this.offices$ = offices;
     const posts = this.postStateService.getPosts();
     this.posts$ = posts;
