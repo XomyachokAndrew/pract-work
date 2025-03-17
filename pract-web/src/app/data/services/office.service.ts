@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { Office, OfficeHistoryDto } from '@models/office-dtos';
+import { Office, OfficeDto, OfficeHistoryDto, OfficeWithoutId } from '@models/office-dtos';
 import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,12 @@ export class OfficeService {
   private URL = `${environment.apiUrl}/offices`
 
   constructor(private http: HttpClient) { }
+
+  addOffice(office: OfficeWithoutId) {
+    return this.http
+      .post<OfficeWithoutId>(this.URL, office)
+      .pipe(catchError(this.handleError));
+  }
 
   getOffices(): Observable<Office[]> {
     return this.http

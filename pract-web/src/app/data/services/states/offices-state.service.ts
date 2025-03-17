@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Office } from '@models/office-dtos';
+import { Office, OfficeDto, OfficeWithoutId } from '@models/office-dtos';
 import { OfficeService } from '@services/office.service';
 import { catchError, Observable, of } from 'rxjs';
 
@@ -13,6 +13,18 @@ export class OfficesStateService {
 
   constructor(private officeService: OfficeService) {
     this.offices = this.loadOffices();
+  }
+
+  addOffice(office: OfficeWithoutId) {
+    this.officeService.addOffice(office)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке данных о рабочих", error);
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   getOffices(): Observable<Office[] | null> {

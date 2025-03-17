@@ -26,10 +26,11 @@ import { LoadingComponent } from "../../data/components/loading/loading.componen
 export class WorkersComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   protected workers!: Observable<WorkerWithDetailsDto[] | null>;
+  
   private readonly dialog = tuiDialog(AddWorkerModalComponent, {
     dismissible: true,
     size: 'm',
-    label: `Редактирование работника`,
+    label: `Добавление работника`,
   });
 
   constructor(

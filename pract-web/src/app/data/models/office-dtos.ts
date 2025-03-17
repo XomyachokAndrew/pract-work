@@ -7,6 +7,11 @@ export interface Office {
     updatedAt: string;
 }
 
+export interface OfficeWithoutId {
+    name: string;
+    address: string;
+}
+
 export interface OfficeDto {
     id: string;
     name: string;
