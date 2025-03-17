@@ -4,6 +4,7 @@ import { catchError, Observable, of } from 'rxjs';
 import { Office } from '@models/office-dtos';
 import { WorkerService } from '@services/worker.service';
 import { WorkerWithPostDto } from '@models/workers-dtos';
+import { OfficeService } from '@services/office.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,27 @@ export class OfficeStateService {
 
   constructor(
     private workerService: WorkerService,
+    private officeService: OfficeService,
   ) { }
 
   setOffice(office: Office) {
     this.office = office;
+  }
+
+  setName(office: Office) {
+    if (!this.office) {
+      return;
+    }
+    this.putOffice(office);
+    this.office.name = office.name;
+  }
+
+  setAddress(office: Office) {
+    if (!this.office) {
+      return;
+    }
+    this.putOffice(office);
+    this.office.address = office.address;
   }
 
   getOffice() {
@@ -31,6 +49,21 @@ export class OfficeStateService {
     }
     this.workers = this.getWorkersInOffice(this.office.id);
     return this.workers;
+  }
+
+  private putOffice(office: Office) {
+    if (!this.office) {
+      return;
+    }
+    this.officeService.putOffice(this.office.id, office)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при обновлении должности работника", error);
+          return of([]);
+        })
+      )
+      .subscribe();
   }
 
   private getWorkersInOffice(id: string): Observable<WorkerWithPostDto[] | null> {

@@ -18,6 +18,13 @@ export class OfficeService {
       .pipe(catchError(this.handleError));
   }
 
+  putOffice(id: string, office: Office) {
+    const resultUrl = `${this.URL}/${id}`;
+    return this.http
+      .put(resultUrl, office)
+      .pipe(catchError(this.handleError));
+  }
+
   getHistoryOfficeForWorker(id: string): Observable<OfficeHistoryDto[]> {
     const resultUrl = `${this.URL}/workers/${id}`;
     return this.http

@@ -80,13 +80,11 @@ namespace Pract.Controllers
                 return BadRequest();
             }
 
-            var office = new Office
-            {
-                Name = officeDto.Name,
-                Address = officeDto.Address,
-            };
-
+            var office = await _context.Offices.FindAsync(id);
+            office.Name = officeDto.Name;
+            office.Address =  officeDto.Address;
             office.UpdatedAt = DateTime.Now; // Обновляем время изменения
+            
             _context.Offices.Update(office);
             await _context.SaveChangesAsync();
 
