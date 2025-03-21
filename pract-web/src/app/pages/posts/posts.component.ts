@@ -4,7 +4,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { TuiButton, tuiDialog } from '@taiga-ui/core';
 import { PostStateService } from '@services/states/post-state.service';
 import { catchError, Observable, of } from 'rxjs';
-import { Post, PostWithout } from '@models/post-dtos';
+import { Post, PostWithoutId } from '@models/post-dtos';
 import { AddPostModalComponent } from '@components/modals/add-post-modal/add-post-modal.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PostCardComponent } from "../../data/components/cards/post-card/post-card.component";
@@ -48,7 +48,7 @@ export class PostsComponent {
   }
 
   addPost() {
-    const post: PostWithout = {
+    const post: PostWithoutId = {
       name: "",
     }
 

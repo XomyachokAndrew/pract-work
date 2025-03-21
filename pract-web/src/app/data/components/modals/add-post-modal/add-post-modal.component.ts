@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { TuiAlertService, TuiButton, TuiDialogContext } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { TuiTextfield } from '@taiga-ui/core';
-import { Post, PostWithout } from '@models/post-dtos';
+import { Post, PostWithoutId } from '@models/post-dtos';
 
 @Component({
   selector: 'app-add-post-modal',
@@ -13,9 +13,9 @@ import { Post, PostWithout } from '@models/post-dtos';
 export class AddPostModalComponent {
   private readonly alerts = inject(TuiAlertService);
 
-  public readonly context = injectContext<TuiDialogContext<PostWithout, PostWithout>>();
+  public readonly context = injectContext<TuiDialogContext<PostWithoutId, PostWithoutId>>();
 
-  protected get data(): PostWithout {
+  protected get data(): PostWithoutId {
     return this.context.data;
   }
 

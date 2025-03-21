@@ -6,7 +6,7 @@ export interface Post {
     updatedAt: string;
 }
 
-export interface PostWithout {
+export interface PostWithoutId {
     name: string;
 }
 

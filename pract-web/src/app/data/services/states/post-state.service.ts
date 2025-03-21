@@ -3,7 +3,7 @@ import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from 
 import { WorkerService } from '../worker.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, Observable, of } from 'rxjs';
-import { Post, PostWithout } from '@models/post-dtos';
+import { Post, PostWithoutId } from '@models/post-dtos';
 import { PostService } from '@services/post.service';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class PostStateService {
     return this.posts;
   }
 
-  addPost(post: PostWithout) {
+  addPost(post: PostWithoutId) {
     this.postService.addPost(post)
       .pipe(
         takeUntilDestroyed(this.destroyRef),

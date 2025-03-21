@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { Post, PostHistoryDto, PostWithout } from '@models/post-dtos';
+import { Post, PostHistoryDto, PostWithoutId } from '@models/post-dtos';
 import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -18,9 +18,9 @@ export class PostService {
       .pipe(catchError(this.handleError));
   }
 
-  addPost(post: PostWithout): Observable<PostWithout> {
+  addPost(post: PostWithoutId): Observable<PostWithoutId> {
     return this.http
-      .post<PostWithout>(this.URL, post)
+      .post<PostWithoutId>(this.URL, post)
       .pipe(catchError(this.handleError));
   }
 
