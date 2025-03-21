@@ -6,6 +6,10 @@ export interface Post {
     updatedAt: string;
 }
 
+export interface PostWithout {
+    name: string;
+}
+
 export interface PostDto {
     id: string;
     name: string;
