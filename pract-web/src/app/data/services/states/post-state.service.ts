@@ -3,7 +3,7 @@ import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from 
 import { WorkerService } from '../worker.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, Observable, of } from 'rxjs';
-import { Post } from '@models/post-dtos';
+import { Post, PostWithout } from '@models/post-dtos';
 import { PostService } from '@services/post.service';
 
 @Injectable({
@@ -21,6 +21,18 @@ export class PostStateService {
 
   getPosts() {
     return this.posts;
+  }
+
+  addPost(post: PostWithout) {
+    this.postService.addPost(post)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке данных о рабочих", error);
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   private loadPosts(): Observable<Post[] | null> {
