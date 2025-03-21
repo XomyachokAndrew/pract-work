@@ -25,6 +25,7 @@ export class OfficesStateService {
         })
       )
       .subscribe();
+    this.offices = this.loadOffices();
   }
 
   getOffices(): Observable<Office[] | null> {

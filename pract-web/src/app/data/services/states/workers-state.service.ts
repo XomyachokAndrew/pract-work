@@ -70,6 +70,7 @@ export class WorkersStateService {
           }
         }
       });
+    this.workers = this.loadWorkers();
   }
 
   private putPostWorker(workerPost: WorkerPostDto) {

@@ -80,8 +80,6 @@ export class AddWorkerModalComponent {
         this.data.office.id = selectedOfficeId.id;
         this.data.office.name = selectedOfficeId.name
       }
-      console.log(this.data);
-      
       this.context.completeWith(this.data);
     }
   }

@@ -23,10 +23,10 @@ import { LoadingComponent } from "../../data/components/loading/loading.componen
   styleUrl: './workers.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkersComponent implements OnInit {
+export class WorkersComponent {
   private destroyRef = inject(DestroyRef);
   protected workers!: Observable<WorkerWithDetailsDto[] | null>;
-  
+
   private readonly dialog = tuiDialog(AddWorkerModalComponent, {
     dismissible: true,
     size: 'm',
@@ -36,9 +36,7 @@ export class WorkersComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private workersStateService: WorkersStateService
-  ) { }
-
-  ngOnInit() {
+  ) {
     const workers = this.workersStateService.getWorkers();
     this.workers = workers;
   }
@@ -81,12 +79,12 @@ export class WorkersComponent implements OnInit {
             const workers = this.workersStateService.getWorkers();
             console.log('');
             this.workers = workers;
-            this.cdr.markForCheck();
           }
         },
         complete: () => {
           console.info('Dialog closed');
         },
       });
+    this.cdr.markForCheck();
   }
 }
