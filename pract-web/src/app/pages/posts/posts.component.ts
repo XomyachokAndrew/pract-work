@@ -4,10 +4,11 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { TuiButton, tuiDialog } from '@taiga-ui/core';
 import { PostStateService } from '@services/states/post-state.service';
 import { catchError, Observable, of } from 'rxjs';
-import { Post, PostWithoutId } from '@models/post-dtos';
+import { Post, PostDto, PostWithoutId } from '@models/post-dtos';
 import { AddPostModalComponent } from '@components/modals/add-post-modal/add-post-modal.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PostCardComponent } from "../../data/components/cards/post-card/post-card.component";
+import { EditPostNameModalComponent } from '@components/modals/edit-post-name-modal/edit-post-name-modal.component';
 
 @Component({
   selector: 'app-posts',
@@ -17,7 +18,7 @@ import { PostCardComponent } from "../../data/components/cards/post-card/post-ca
     LoadingComponent,
     AsyncPipe,
     PostCardComponent
-],
+  ],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.less'
 })
@@ -31,6 +32,12 @@ export class PostsComponent {
     label: `Добавление должности`,
   });
 
+  private readonly dialogName = tuiDialog(EditPostNameModalComponent, {
+    dismissible: true,
+    size: 'm',
+    label: `Изменение должности`,
+  });
+
   constructor(
     private cdr: ChangeDetectorRef,
     private postStateService: PostStateService
@@ -39,12 +46,41 @@ export class PostsComponent {
     this.posts = posts;
   }
 
-  onDelete() {
-
+  onDelete(id: string) {
+    this.postStateService.deletePost(id);
   }
 
-  onEdit() {
-
+  onEdit(post: Post) {
+    this.dialogName(post)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке модального окна", error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          console.info(`Dialog emitted data = ${data}`);
+          if (Array.isArray(data)) {
+            // Обработка случая, когда data является массивом
+            console.error('Received an array instead of WorkerDto');
+          } else if (data) {
+            const postDto: PostDto = {
+              id: data.id,
+              name: data.name
+            }
+            this.postStateService.putPost(postDto);
+            const posts = this.postStateService.getPosts();
+            console.log('');
+            this.posts = posts;
+            this.cdr.markForCheck();
+          }
+        },
+        complete: () => {
+          console.info('Dialog closed');
+        },
+      });
   }
 
   addPost() {
@@ -53,30 +89,30 @@ export class PostsComponent {
     }
 
     this.dialog(post)
-    .pipe(
-      takeUntilDestroyed(this.destroyRef),
-      catchError(error => {
-        console.error("Ошибка при загрузке модального окна", error);
-        return of([]);
-      })
-    )
-    .subscribe({
-      next: (data) => {
-        console.info(`Dialog emitted data = ${data}`);
-        if (Array.isArray(data)) {
-          // Обработка случая, когда data является массивом
-          console.error('Received an array instead of WorkerDto');
-        } else if (data) {
-          this.postStateService.addPost(data);
-          const posts = this.postStateService.getPosts();
-          console.log('');
-          this.posts = posts;
-          this.cdr.markForCheck();
-        }
-      },
-      complete: () => {
-        console.info('Dialog closed');
-      },
-    });
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          console.error("Ошибка при загрузке модального окна", error);
+          return of([]);
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          console.info(`Dialog emitted data = ${data}`);
+          if (Array.isArray(data)) {
+            // Обработка случая, когда data является массивом
+            console.error('Received an array instead of WorkerDto');
+          } else if (data) {
+            this.postStateService.addPost(data);
+            const posts = this.postStateService.getPosts();
+            console.log('');
+            this.posts = posts;
+            this.cdr.markForCheck();
+          }
+        },
+        complete: () => {
+          console.info('Dialog closed');
+        },
+      });
   }
 }

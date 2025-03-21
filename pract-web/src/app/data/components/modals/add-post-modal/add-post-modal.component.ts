@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { TuiAlertService, TuiButton, TuiDialogContext } from '@taiga-ui/core';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { TuiTextfield } from '@taiga-ui/core';
-import { Post, PostWithoutId } from '@models/post-dtos';
+import { PostWithoutId } from '@models/post-dtos';
 
 @Component({
   selector: 'app-add-post-modal',
