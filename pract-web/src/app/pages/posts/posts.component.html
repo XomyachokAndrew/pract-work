@@ -1,0 +1,13 @@
+<ng-container *ngIf="posts; else loading">
+    <div class="btn-container">
+        <button tuiButton (click)="addPost()">Добавить должность</button>
+    </div>
+    <div class="container">
+        <div class="card-holder" *ngFor="let post of posts | async">
+            <app-post-card [post]="post" (edit)="onEdit(post)" (delete)="onDelete(post.id)"></app-post-card>
+        </div>
+    </div>
+</ng-container>
+<ng-template #loading>
+    <app-loading></app-loading>
+</ng-template>

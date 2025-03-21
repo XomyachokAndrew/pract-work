@@ -72,20 +72,19 @@ namespace Pract.Controllers
 
         // PUT api/posts/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPost(Guid id, PostDto postDto)
+        public async Task<IActionResult> PutPost(Guid id, [FromBody] PostDto postDto)
         {
             if (!PostExists(id))
             {
                 return BadRequest();
             }
 
-            var post = new Post
-            {
-                Name = postDto.Name
-            };
+            var post = await _context.Posts.FindAsync(id);
+
+            post.Name = postDto.Name;
 
             post.UpdatedAt = DateTime.Now;
-            _context.Posts.Add(post);
+            _context.Posts.Update(post);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -117,11 +116,19 @@ namespace Pract.Controllers
                 return NotFound();
             }
 
+            var workerPosts = await _context.WorkerPosts.Where(wp => wp.PostId == id).ToListAsync();
+            foreach (var item in workerPosts)
+            {
+                item.IsDeleted = true;
+                item.UpdatedAt = DateTime.Now;
+            }
+
             // Мягкое удаление
             post.IsDeleted = true;
             post.UpdatedAt = DateTime.Now; // Обновляем время изменения
 
             _context.Posts.Update(post);
+            _context.WorkerPosts.UpdateRange(workerPosts);
             await _context.SaveChangesAsync();
 
             return NoContent();

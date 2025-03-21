@@ -1,0 +1,11 @@
+<div class="card" tuiAppearance="primary" tuiCardMedium>
+    <h1 tuiTitle class="H2">
+        {{post.name}}
+    </h1>
+    <section class="footer">
+        <button iconStart="@tui.pencil" size="s" appearance="secondary" class="btn info" tuiButton
+            (click)="onEdit()"></button>
+        <button iconStart="@tui.trash-2" size="s" appearance="secondary" class="btn danger" tuiButton
+            (click)="onDelete()"></button>
+    </section>
+</div>
