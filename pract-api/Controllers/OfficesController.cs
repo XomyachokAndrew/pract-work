@@ -82,9 +82,9 @@ namespace Pract.Controllers
 
             var office = await _context.Offices.FindAsync(id);
             office.Name = officeDto.Name;
-            office.Address =  officeDto.Address;
+            office.Address = officeDto.Address;
             office.UpdatedAt = DateTime.Now; // Обновляем время изменения
-            
+
             _context.Offices.Update(office);
             await _context.SaveChangesAsync();
 
@@ -118,11 +118,18 @@ namespace Pract.Controllers
                 return NotFound();
             }
 
+            var workerOffices = await _context.WorkerOffices.Where(wo => wo.OfficeId == id && wo.UpdatedAt == null).ToListAsync();
+            foreach (var item in workerOffices)
+            {
+                item.IsDeleted = true;
+                item.UpdatedAt = DateTime.Now;
+            }
             // Мягкое удаление
             office.IsDeleted = true;
             office.UpdatedAt = DateTime.Now; // Обновляем время изменения
 
             _context.Offices.Update(office);
+            _context.WorkerOffices.UpdateRange(workerOffices);
             await _context.SaveChangesAsync();
 
             return NoContent();
