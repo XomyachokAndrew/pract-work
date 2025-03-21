@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WorkerDto, WorkerOfficeDto, WorkerPostDto, WorkerWithDetailsDto } from '@models/workers-dtos';
 import { WorkerService } from '@services/worker.service';
 import { catchError, Observable, of } from 'rxjs';
-import { WorkerStateService } from './worker-state.service';
 
 @Injectable({
   providedIn: 'root'

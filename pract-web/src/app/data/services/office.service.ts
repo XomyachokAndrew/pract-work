@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { Office, OfficeHistoryDto } from '@models/office-dtos';
+import { Office, OfficeDto, OfficeHistoryDto, OfficeWithoutId } from '@models/office-dtos';
 import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
@@ -12,9 +12,29 @@ export class OfficeService {
 
   constructor(private http: HttpClient) { }
 
-  getOffice(): Observable<Office[]> {
+  addOffice(office: OfficeWithoutId) {
+    return this.http
+      .post<OfficeWithoutId>(this.URL, office)
+      .pipe(catchError(this.handleError));
+  }
+
+  getOffices(): Observable<Office[]> {
     return this.http
       .get<Office[]>(this.URL)
+      .pipe(catchError(this.handleError));
+  }
+
+  putOffice(id: string, office: Office) {
+    const resultUrl = `${this.URL}/${id}`;
+    return this.http
+      .put(resultUrl, office)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteOffice(id: string) {
+    const resultUrl = `${this.URL}/${id}`;
+    return this.http
+      .delete(resultUrl)
       .pipe(catchError(this.handleError));
   }
 

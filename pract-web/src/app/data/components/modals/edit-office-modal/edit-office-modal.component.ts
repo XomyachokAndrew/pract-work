@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { LoadingComponent } from '@components/loading/loading.component';
 import { Office } from '@models/office-dtos';
 import { WorkerWithDetailsDto } from '@models/workers-dtos';
-import { OfficeStateService } from '@services/states/office-state.service';
+import { OfficesStateService } from '@services/states/offices-state.service';
 import { tuiPure, type TuiStringHandler, type TuiContext, TuiLet } from '@taiga-ui/cdk';
-import { TuiButton, TuiDataList, TuiDialogContext, TuiLoader } from '@taiga-ui/core';
+import { TuiButton, TuiDataList, TuiDialogContext } from '@taiga-ui/core';
 import { TuiSelectModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { Observable } from 'rxjs';
@@ -33,9 +33,9 @@ export class EditOfficeModalComponent {
   protected selectedOffice: Office | null = null;
 
   constructor(
-    private officeStateService: OfficeStateService
+    private officesStateService: OfficesStateService
   ) {
-    const offices = this.officeStateService.getOffices();
+    const offices = this.officesStateService.getOffices();
     this.offices$ = offices;
   }
 
