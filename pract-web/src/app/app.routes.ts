@@ -6,9 +6,10 @@ import { WorkerComponent } from '@pages/worker/worker.component';
 import { WorkersComponent } from '@pages/workers/workers.component';
 
 export const routes: Routes = [
-    {path: "workers", component: WorkersComponent},
-    {path: "worker", component: WorkerComponent},
-    {path: "posts", component: PostsComponent},
+    {path: "", component: OfficesComponent},
     {path: "offices", component: OfficesComponent},
+    {path: "workers", component: WorkersComponent},
+    {path: "posts", component: PostsComponent},
     {path: "office", component: OfficeComponent},
+    {path: "worker", component: WorkerComponent},
 ];
