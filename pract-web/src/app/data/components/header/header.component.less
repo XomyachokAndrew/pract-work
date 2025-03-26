@@ -1,0 +1,29 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  background: linear-gradient(90deg, #0057A6 60.5%, #002240 100%);
+  padding: 1rem 2rem;
+  color: white;
+
+  .navigation {
+    display: flex;
+    width: 25rem;
+    list-style: none;
+    justify-content: space-between;
+
+    &_link {
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      transition: 0.3s;
+    }
+
+    &_link:hover {
+      color: rgb(207, 207, 207);
+    }
+  }
+}

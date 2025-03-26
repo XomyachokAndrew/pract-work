@@ -1,0 +1,110 @@
+<div class="container">
+    <div class="title">
+        <span class="H2">
+            <b>
+                {{worker.name.surname}}
+                {{worker.name.firstName}}
+                {{worker.name.patronymic}}
+            </b>
+        </span>
+        <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
+            (click)="onChange('name')"></button>
+        <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
+            (click)="deleteClick('worker')"></button>
+        <div class="subtitle">
+            <span class="H3 subtitle__text">
+                {{worker.post?.name || 'Должности нет'}}
+                <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
+                    (click)="onChange('post')"></button>
+                <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
+                    (click)="deleteClick('post')"></button>
+            </span>
+            <span class="H3 subtitle__text">
+                <b>
+                    Офис:
+                </b>
+                {{worker.office?.name || 'Отсутствует'}}
+                <button iconStart="@tui.pencil" tuiButton size="s" appearance="secondary" class="btn info"
+                    (click)="onChange('office')"></button>
+                <button iconStart="@tui.trash-2" tuiButton size="s" appearance="secondary" class="btn danger"
+                    (click)="deleteClick('office')"></button>
+            </span>
+        </div>
+    </div>
+    <div class="table">
+        <tui-scrollbar>
+            <cdk-virtual-scroll-viewport #viewport appendOnly tuiScrollable class="viewport tui-zero-scrollbar"
+                [itemSize]="45" [maxBufferPx]="500" [minBufferPx]="400">
+                <table tuiTable [columns]="['name', 'createdAt', 'updatedAt']">
+                    <thead class="thead">
+                        <tr tuiThGroup>
+                            <th *tuiHead="'name'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Название
+                            </th>
+                            <th *tuiHead="'createdAt'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Дата назначения
+                            </th>
+                            <th *tuiHead="'updatedAt'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Дата снятия с должности
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody tuiTbody>
+                        <tr *cdkVirtualFor="let item of postHistories | async | tuiTableSort" tuiTr>
+                            <td *tuiCell="'name'" tuiTd>
+                                {{ item.name }}
+                            </td>
+                            <td *tuiCell="'createdAt'" tuiTd>
+                                {{ item.createdAt | date: 'dd.MM.yyyy' }}
+                            </td>
+                            <td *tuiCell="'updatedAt'" tuiTd>
+                                {{ item.updatedAt | date: 'dd.MM.yyyy' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </tui-scrollbar>
+    </div>
+    <div class="table">
+        <tui-scrollbar>
+            <cdk-virtual-scroll-viewport #viewport appendOnly tuiScrollable class="viewport tui-zero-scrollbar"
+                [itemSize]="45" [maxBufferPx]="500" [minBufferPx]="400">
+                <table tuiTable [columns]="['name', 'createdAt', 'updatedAt']">
+                    <thead>
+                        <tr tuiThGroup>
+                            <th *tuiHead="'name'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Название
+                            </th>
+                            <th *tuiHead="'createdAt'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Дата въезда
+                            </th>
+                            <th *tuiHead="'updatedAt'" tuiTh [sticky]="true"
+                                [style.top.px]="-(viewport.getOffsetToRenderedContentStart() || 0)">
+                                Дата выезда
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody tuiTbody>
+                        <tr *cdkVirtualFor="let item of officeHistories | async | tuiTableSort" tuiTr>
+                            <td *tuiCell="'name'" tuiTd>
+                                {{ item.name }}
+                            </td>
+                            <td *tuiCell="'createdAt'" tuiTd>
+                                {{ item.createdAt | date: 'dd.MM.yyyy' }}
+                            </td>
+                            <td *tuiCell="'updatedAt'" tuiTd>
+                                {{ item.updatedAt | date: 'dd.MM.yyyy' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </cdk-virtual-scroll-viewport>
+        </tui-scrollbar>
+    </div>
+</div>

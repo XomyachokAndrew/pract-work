@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: Pract
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - pract-network
+  pgadmin:
+    image: dpage/pgadmin4:snapshot
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    networks:
+      - pract-network
+  api:
+    image: practapi:latest
+    build:
+      context: ./pract-api/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Database=Pract;Username=postgres;Password=root"
+    volumes:
+      - ./pract-api/:/src
+    networks:
+      - pract-network
+    depends_on:
+      - db
+
+volumes:
+  pg-data:
+  
+networks:
+  pract-network:
+    driver: bridge
