@@ -36,6 +36,17 @@ services:
       - pract-network
     depends_on:
       - db
+  web:
+    image: practweb:latest
+    build:
+      context: ./pract-web/
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    volumes:
+      - ./pract-web/:/src
+    networks:
+      - pract-network
 
 volumes:
   pg-data:
